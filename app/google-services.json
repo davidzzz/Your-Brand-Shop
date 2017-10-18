@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "405838264341",
+    "project_id": "restoran-178706"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:405838264341:android:033c90d3e6d2a230",
+        "android_client_info": {
+          "package_name": "com.ushare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "405838264341-gpocabpe14tjme4jjsvahfti9soh9or6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZn0L2QP63u1GybZViGcW3nMWepBsHD8M"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">@color/material_red_500</color>
+    <color name="colorPrimaryDark">@color/material_red_600</color>
+    <color name="colorPrimaryDark2">@color/material_red_700</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="textColorPrimaryBlack">#000000</color>
+    <color name="windowBackground">#FFFFFF</color>
+    <color name="navigationBarColor">#000000</color>
+    <color name="colorAccent">@color/material_grey_500</color>
+    <color name="white_15_percent">#26ffffff</color>
+    <color name="tabsScrollColor">@color/material_grey_300</color>
+    <color name="white_30_percent">#4Dffffff</color>
+    <color name="main_color_grey_50">@color/material_grey_50</color>
+    <color name="main_color_grey_100">@color/material_grey_100</color>
+    <color name="main_color_grey_200">@color/material_grey_200</color>
+    <color name="main_color_grey_300">@color/material_grey_300</color>
+    <color name="main_color_grey_400">@color/material_grey_400</color>
+    <color name="main_color_grey_500">@color/material_grey_500</color>
+    <color name="main_color_grey_600">@color/material_grey_600</color>
+    <color name="main_color_grey_700">@color/material_grey_700</color>
+    <color name="main_color_grey_800">@color/material_grey_800</color>
+    <color name="main_color_grey_900">@color/material_grey_900</color>
+    <color name="red_23">#ffec2133</color>
+    
+    <color name="divider_color">@color/main_color_grey_500</color>
+    <!-- background menu -->
+    <color name="list_background">@color/material_grey_100</color>
+    <!-- background menu dipencet -->
+    <color name="list_background_pressed">@color/material_grey_300</color>
+    <color name="gradient_start">#50000000</color>
+    <color name="gradient_light_start">#30000000</color>
+    <color name="cpb_grey">#ffdedede</color>
+    <color name="cpb_blue">#ff0099cc</color>
+    <color name="cpb_blue_dark">#ff00719b</color>
+    <color name="cpb_red">#ffff4444</color>
+    <color name="cpb_red_dark">#ffcd3a3a</color>
+    <color name="cpb_green">#9ccd08</color>
+    <color name="cpb_green_dark">#ff6d9b00</color>
+    <color name="cpb_white">@android:color/white</color>
+</resources>
