@@ -3,25 +3,41 @@ package com.ushare;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.ushare.app.myapp;
 import com.ushare.model.Cart;
+import com.ushare.model.Help;
+import com.ushare.model.Reservasi;
 import com.ushare.util.Constant;
 import com.ushare.util.SessionManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -30,20 +46,25 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
 public class ReservasiActivity extends AppCompatActivity {
     Toolbar mToolbar;
     EditText teksNama, teksJumlah, teksHP;
     TextView teksTanggal, teksWaktu;
     Button send;
-    String URL_SEND, userid, nama, jumlah, noHP, tanggal, waktu;
+    String URL_SEND, userid, nama, jumlah, noHP, tanggal, waktu, akses;
     SessionManager session;
     HashMap<String, String> user;
     ProgressDialog loading;
     int colorValue;
     Calendar c;
+    Adapter adapter;
+    ArrayList<Reservasi> list = new ArrayList<>();
+    ListView listView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,38 +77,50 @@ public class ReservasiActivity extends AppCompatActivity {
         colorValue = getIntent().getIntExtra("color", 0);
         LinearLayout layout = (LinearLayout)findViewById(R.id.activity_reservasi);
         layout.setBackgroundColor(colorValue);
-        c = Calendar.getInstance();
-        pilihTanggal();
-        teksNama = (EditText) findViewById(R.id.nama);
-        teksJumlah = (EditText) findViewById(R.id.jumlah);
-        teksHP = (EditText) findViewById(R.id.nomor_handphone);
-        teksTanggal = (TextView) findViewById(R.id.teksTanggal);
-        teksWaktu = (TextView) findViewById(R.id.teksWaktu);
-        send = (Button) findViewById(R.id.send);
         URL_SEND = Constant.URLADMIN + "api/reservasi.php";
         session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
         userid = user.get(session.KEY_PASSENGER_ID);
-        send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nama = teksNama.getText().toString();
-                jumlah = teksJumlah.getText().toString();
-                noHP = teksHP.getText().toString();
-                if (nama.equals("")) {
-                    Toast.makeText(ReservasiActivity.this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show();
-                } else if (jumlah.equals("")) {
-                    Toast.makeText(ReservasiActivity.this, "Jumlah Pelanggan tidak boleh kosong", Toast.LENGTH_SHORT).show();
-                } else if (noHP.equals("")) {
-                    Toast.makeText(ReservasiActivity.this, "Nomor Handphone tidak boleh kosong", Toast.LENGTH_SHORT).show();
-                } else {
-                    loading = ProgressDialog.show(ReservasiActivity.this, "Kirim Reservasi", "Please wait...", false, true);
-                    tanggal = teksTanggal.getText().toString();
-                    waktu = teksWaktu.getText().toString();
-                    new SendReservasi().execute();
+        akses = user.get(SessionManager.KEY_AKSES);
+        LinearLayout layout_form = (LinearLayout) findViewById(R.id.form_reservasi);
+        listView = (ListView) findViewById(R.id.list_reservasi);
+        if (akses.equals("1")) {
+            layout_form.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+            c = Calendar.getInstance();
+            pilihTanggal();
+            teksNama = (EditText) findViewById(R.id.nama);
+            teksJumlah = (EditText) findViewById(R.id.jumlah);
+            teksHP = (EditText) findViewById(R.id.nomor_handphone);
+            teksTanggal = (TextView) findViewById(R.id.teksTanggal);
+            teksWaktu = (TextView) findViewById(R.id.teksWaktu);
+            send = (Button) findViewById(R.id.send);
+            send.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    nama = teksNama.getText().toString();
+                    jumlah = teksJumlah.getText().toString();
+                    noHP = teksHP.getText().toString();
+                    if (nama.equals("")) {
+                        Toast.makeText(ReservasiActivity.this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                    } else if (jumlah.equals("")) {
+                        Toast.makeText(ReservasiActivity.this, "Jumlah Pelanggan tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                    } else if (noHP.equals("")) {
+                        Toast.makeText(ReservasiActivity.this, "Nomor Handphone tidak boleh kosong", Toast.LENGTH_SHORT).show();
+                    } else {
+                        loading = ProgressDialog.show(ReservasiActivity.this, "Kirim Reservasi", "Please wait...", false, true);
+                        tanggal = teksTanggal.getText().toString();
+                        waktu = teksWaktu.getText().toString();
+                        new SendReservasi().execute();
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            layout_form.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            adapter = new Adapter(list);
+            ambilData();
+        }
     }
 
     public void pilihTanggal() {
@@ -190,6 +223,83 @@ public class ReservasiActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(ReservasiActivity.this, "Reservasi gagal dikirim", Toast.LENGTH_LONG).show();
             }
+        }
+    }
+
+    private void ambilData() {
+        String URL = Constant.URLADMIN + "api/reservasi.php?key=" + Constant.KEY + "&tag=list";
+        JsonObjectRequest jsonKate = new JsonObjectRequest(URL, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                list.clear();
+                parseJsonKategory(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myapp.getInstance().addToRequestQueue(jsonKate);
+    }
+
+    private void parseJsonKategory(JSONObject response) {
+        try {
+            JSONArray feedArray = response.getJSONArray("data");
+            for (int i = 0; i < feedArray.length(); i++) {
+                JSONObject feedObj = (JSONObject) feedArray.get(i);
+                Reservasi reservasi = new Reservasi();
+                reservasi.setNama(feedObj.getString("nama"));
+                reservasi.setJumlah(feedObj.getInt("jumlah"));
+                reservasi.setNoHP(feedObj.getString("nomor_handphone"));
+                reservasi.setWaktu(feedObj.getString("waktu"));
+                list.add(reservasi);
+            }
+            listView.setAdapter(adapter);
+        } catch (JSONException e) {
+        }
+        adapter.notifyDataSetChanged();
+    }
+
+    public class Adapter extends BaseAdapter {
+        private LayoutInflater inflater;
+        private List<Reservasi> list;
+
+        public Adapter(List<Reservasi> list) {
+            this.list = list;
+        }
+
+        @Override
+        public int getCount() {
+            return list.size();
+        }
+
+        @Override
+        public Object getItem(int location) {
+            return list.get(location);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+            if (inflater == null)
+                inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            if (convertView == null)
+                convertView = inflater.inflate(R.layout.list_reservasi, null);
+            Reservasi reservasi = list.get(position);
+            TextView nama = (TextView) convertView.findViewById(R.id.nama);
+            nama.setText(reservasi.getNama());
+            TextView jumlah = (TextView) convertView.findViewById(R.id.jumlah);
+            jumlah.setText("Jumlah : " + reservasi.getJumlah() + " orang");
+            TextView noHP = (TextView) convertView.findViewById(R.id.noHP);
+            noHP.setText("No. HP : " + reservasi.getNoHP());
+            TextView waktu = (TextView) convertView.findViewById(R.id.waktu);
+            waktu.setText(reservasi.getWaktu());
+            return convertView;
         }
     }
 
