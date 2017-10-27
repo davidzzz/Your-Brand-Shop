@@ -276,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         myapp.getInstance().addToRequestQueue(jsonKate);
 
-        mDemoSlider.setPresetTransformer(SliderLayout.Transformer.ZoomIn);
+        mDemoSlider.setPresetTransformer(SliderLayout.Transformer.Accordion);
         mDemoSlider.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
         mDemoSlider.setCustomAnimation(new DescriptionAnimation());
         mDemoSlider.setDuration(5000);

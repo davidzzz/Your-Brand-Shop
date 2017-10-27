@@ -28,7 +28,7 @@
                     android:id="@+id/slider"
                     layout="@layout/render_type_text"
                     android:layout_width="match_parent"
-                    android:layout_height="301dp"
+                    android:layout_height="250dp"
                     custom:auto_cycle="true"
                     custom:indicator_visibility="visible"
                     custom:pager_animation="Accordion"
