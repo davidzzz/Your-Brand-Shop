@@ -1,11 +1,13 @@
 package com.ushare;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -58,6 +60,16 @@ public class FragmentHistory extends Fragment implements SwipeRefreshLayout.OnRe
             public void run() {
                 swipeRefreshLayout.setRefreshing(true);
                 ambilData();
+            }
+        });
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1,
+                                    int position, long arg3) {
+                ItemOrder object = itemList.get(position);
+                Intent detail = new Intent(getActivity(), OrderDetail.class);
+                detail.putExtra("item_order", object);
+                startActivity(detail);
             }
         });
         return rootView;

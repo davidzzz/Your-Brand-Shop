@@ -1,7 +1,10 @@
 package com.ushare.adapter;
 
 import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,23 +13,24 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
+import com.ushare.FragOrderProses;
 import com.ushare.R;
+import com.ushare.TabActivity;
 import com.ushare.model.ItemOrder;
 
 import java.util.List;
 
 public class OrderAdapter extends BaseAdapter {
-
-
     private Context activity;
+    private Fragment fragment;
     private LayoutInflater inflater;
     private List<ItemOrder> itemList;
-    String order_id,URL;
-    public OrderAdapter(Activity activity, List<ItemOrder> itemList) {
+    private String order_id;
+    public OrderAdapter(Activity activity, List<ItemOrder> itemList, Fragment fragment) {
         this.activity = activity;
         this.itemList = itemList;
+        this.fragment = fragment;
     }
-
 
     @Override
     public int getCount() {
@@ -42,7 +46,6 @@ public class OrderAdapter extends BaseAdapter {
     public long getItemId(int position) {
         return position;
     }
-
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -61,11 +64,52 @@ public class OrderAdapter extends BaseAdapter {
         if(item.getStatus().equals("PROCESSED")){
             btnCancel.setText("Accept Delivery");
         }else{
-            btnCancel.setText("");
+            btnCancel.setText("CANCEL");
         }
         status.setText(item.getStatus());
         txtTotal.setText("Rp "+item.getTotal());
         txtTime.setText(item.getTanggal().replace("-","/"));
+        btnCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                order_id = item.getId();
+                if (item.getStatus().equals("PROCESSED")) {
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+                    alert.setTitle(R.string.app_name);
+                    alert.setIcon(R.drawable.ic_launcher);
+                    alert.setMessage("Accept Delivery");
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            ((FragOrderProses)fragment).Accept(order_id);
+                        }
+                    });
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    alert.show();
+                } else {
+                    final AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+                    alert.setTitle(R.string.app_name);
+                    alert.setIcon(R.drawable.ic_launcher);
+                    alert.setMessage("Cancel This Order ??");
+                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            ((FragOrderProses)fragment).Cancel(order_id);
+                        }
+                    });
+                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    alert.show();
+                }
+            }
+        });
 
         return convertView;
     }

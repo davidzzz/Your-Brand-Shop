@@ -2,6 +2,7 @@ package com.ushare;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -50,7 +51,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
     private OrderAdapter adapter;
     SessionManager session;
     HashMap<String, String> user;
-    String URL_ORDER,userid,URL_CANCEL,order_id,URL_ACCEPT;
+    String URL_ORDER,userid,URL_CANCEL,URL_ACCEPT;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -61,7 +62,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
         itemList = new ArrayList<ItemOrder>();
         user = session.getUserDetails();
         userid = user.get(session.KEY_PASSENGER_ID);
-        adapter = new OrderAdapter(getActivity(), itemList);
+        adapter = new OrderAdapter(getActivity(), itemList, this);
         URL_CANCEL = Constant.URLADMIN+"api/cancel.php";
         URL_ACCEPT = Constant.URLADMIN+"api/accept_user.php";
         URL_ORDER = Constant.URLADMIN+"api/history.php?key=" + Constant.KEY + "&tag=order&user_id="+userid;
@@ -77,52 +78,17 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1,
                                     int position, long arg3) {
-                object= itemList.get(position);
-                order_id = object.getId();
-                if (object.getStatus().equals("PROCESSED")) {
-                    final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle(R.string.app_name);
-                    alert.setIcon(R.drawable.ic_launcher);
-                    alert.setMessage("Accept Delivery");
-                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Accept();
-                        }
-                    });
-                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.cancel();
-
-                        }
-                    });
-
-                    alert.show();
-                } else {
-                    final AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setTitle(R.string.app_name);
-                    alert.setIcon(R.drawable.ic_launcher);
-                    alert.setMessage("Cancel This Order ??");
-                    alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Cancel();
-                        }
-                    });
-                    alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.cancel();
-
-                        }
-                    });
-
-                    alert.show();
-                }
+                object = itemList.get(position);
+                Intent detail = new Intent(getActivity(), OrderDetail.class);
+                detail.putExtra("item_order", object);
+                startActivity(detail);
             }
         });
 
         return rootView;
     }
 
-    private void Accept() {
+    public void Accept(final String order_id) {
         final ProgressDialog loading = ProgressDialog.show(getActivity(),"Send Data...","Please wait...",false,true);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_ACCEPT,
                 new Response.Listener<String>() {
@@ -159,7 +125,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
         myapp.getInstance().addToRequestQueue(stringRequest);
     }
 
-    private void Cancel() {
+    public void Cancel(final String order_id) {
         final ProgressDialog loading = ProgressDialog.show(getActivity(),"Send Data...","Please wait...",false,true);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URL_CANCEL,
                 new Response.Listener<String>() {
@@ -220,7 +186,6 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
     private void parseJsonKategory(JSONObject response) {
         try {
             JSONArray feedArray = response.getJSONArray("data");
-
             for (int i = 0; i < feedArray.length(); i++) {
                 JSONObject feedObj = (JSONObject) feedArray.get(i);
                 ItemOrder item = new ItemOrder();
@@ -229,13 +194,9 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
                 item.setTotal(feedObj.getInt("total_order"));
                 item.setStatus(feedObj.getString("status_order"));
                 item.setTanggal(feedObj.getString("time"));
-
                 itemList.add(item);
             }
-
-            // notify data changes to list adapater
             list.setAdapter(adapter);
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -252,7 +213,6 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
     public void onResume() {
         ambilData();
         super.onResume();
-
     }
 
     @Override
