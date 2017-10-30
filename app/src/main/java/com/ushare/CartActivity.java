@@ -33,6 +33,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -87,6 +89,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     int perkm = 0;
     int poin = 0;
     int totalBarang = 0;
+    boolean onTheSpot = false;
     double latToko = 0.0, lngToko = 0.0;
     String idFlashDeal = "";
     TextView textTotal, textPoin, txtOngkir, txtsubtotl,titleongkir;
@@ -133,6 +136,30 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         poin = getIntent().getIntExtra("poin", 0);
         idFlashDeal = getIntent().getStringExtra("idFlashDeal");
 
+        CheckBox cek = (CheckBox) findViewById(R.id.cek);
+        cek.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                LinearLayout layoutAlamat = (LinearLayout) findViewById(R.id.layout_alamat);
+                LinearLayout layoutPoin = (LinearLayout) findViewById(R.id.layout_poin);
+                LinearLayout layoutOngkir = (LinearLayout) findViewById(R.id.layout_ongkir);
+                onTheSpot = b;
+                if (b) {
+                    layoutAlamat.setVisibility(View.GONE);
+                    layoutPoin.setVisibility(View.GONE);
+                    layoutOngkir.setVisibility(View.GONE);
+                    subTotal -= ongkir;
+                    txtsubtotl.setText(formatduit.format(subTotal) + "");
+                } else {
+                    layoutAlamat.setVisibility(View.VISIBLE);
+                    layoutPoin.setVisibility(View.VISIBLE);
+                    layoutOngkir.setVisibility(View.VISIBLE);
+                    subTotal += ongkir;
+                    txtsubtotl.setText(formatduit.format(subTotal) + "");
+                }
+            }
+        });
+
         URL_SEND = Constant.URLADMIN + "api/send_order.php";
         URL_CONF = Constant.URLAPI + "key=" + Constant.KEY + "&tag=konfigurasi&id=4";
         URL_LOKASI = Constant.URLAPI + "key=" + Constant.KEY + "&tag=lokasiToko";
@@ -149,19 +176,21 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         String ttl = textTotal.getText().toString();
         totalorder = ttl.replace(",","");
 
-        edtAlamat.setError(null);
-        edt_telp.setError(null);
+        if (!onTheSpot) {
+            edtAlamat.setError(null);
+            edt_telp.setError(null);
 
-        if (alamat.length() == 0) {
-            edtAlamat.setError("Alamat masih kosong.");
-            return false;
-        }
-        if (telp.length() == 0) {
-            edt_telp.setError("Telp masih kosong.");
-            return false;
-        }
-        if (meter > 20) {
-            Toast.makeText(CartActivity.this, "Maximum 20 km..", Toast.LENGTH_SHORT).show();
+            if (alamat.length() == 0) {
+                edtAlamat.setError("Alamat masih kosong.");
+                return false;
+            }
+            if (telp.length() == 0) {
+                edt_telp.setError("Telp masih kosong.");
+                return false;
+            }
+            if (meter > 20) {
+                Toast.makeText(CartActivity.this, "Maximum 20 km..", Toast.LENGTH_SHORT).show();
+            }
         }
         return true;
     }
@@ -171,10 +200,15 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setCancelable(false);
         builder.setTitle("KONFIRMASI CHECKOUT");
-        builder.setMessage("Total Order : Rp "+ totalorder +"\n"+repTotal+
-                "\nOngkir : Rp "+ongkir+
-                "\nSub Total :"+txtsubtotl.getText().toString()+
-                "\n\nDi Kirim Ke :\n"+alamat+"\n");
+        if (!onTheSpot) {
+            builder.setMessage("Total Order : Rp " + totalorder + "\n" + repTotal +
+                    "\nOngkir : Rp " + ongkir +
+                    "\nSub Total :" + txtsubtotl.getText().toString() +
+                    "\n\nDi Kirim Ke :\n" + alamat + "\n");
+        } else {
+            builder.setMessage("Total Order : Rp " + totalorder + "\n" + repTotal +
+                    "\nSub Total :" + txtsubtotl.getText().toString() + "\n");
+        }
         builder.setPositiveButton(getString(R.string.kirim), new DialogInterface.OnClickListener() {
 
             public void onClick(final DialogInterface dialog, int which) {
@@ -221,9 +255,12 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 sb.deleteCharAt(sb.length() - 1);
                 sb.append("]");
-                String parameter = "idUser=" + userid + "&totalOrder=" + totalorder + "&ongkir=" + ongkir + "&alamat=" + alamat +
-                        "&notes=" + notes + "&telepon=" + telp + "&poin=" + poin + "&key=" + Constant.KEY + "&cartArray=" + sb.toString();
+                String parameter = "idUser=" + userid + "&totalOrder=" + totalorder + "&notes=" + notes + "&onTheSpot=" + onTheSpot
+                        + "&key=" + Constant.KEY + "&cartArray=" + sb.toString();
 
+                if (!onTheSpot) {
+                    parameter += "&ongkir=" + ongkir + "&alamat=" + alamat + "&telepon=" + telp + "&poin=" + poin;
+                }
                 if (idFlashDeal != null) {
                     parameter += "&idFlashDeal=" + idFlashDeal;
                 }

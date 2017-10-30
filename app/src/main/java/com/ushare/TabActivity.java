@@ -35,7 +35,7 @@ public class TabActivity extends AppCompatActivity {
         setContentView(R.layout.activity_tab);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("VOUCHER");
+        getSupportActionBar().setTitle("ORDER");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         LinearLayout layoutPoin = (LinearLayout) findViewById(R.id.layout_poin);
         SessionManager session = new SessionManager(getApplicationContext());
