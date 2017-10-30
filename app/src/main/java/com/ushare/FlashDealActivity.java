@@ -53,7 +53,7 @@ import java.util.ArrayList;
 
 public class FlashDealActivity extends AppCompatActivity implements EasyPermission.OnPermissionResult, LocationListener {
     private Toolbar toolbar;
-    String id, URL, nama, idProduk;
+    String id, URL, nama, idProduk, gambar;
     private SliderLayout mDemoSlider;
     private TextView teksNama, teksHarga, teksHargaAsli, teksPoin, teksQty, teksSisa, deskripsi, total;
     private Button order;
@@ -106,6 +106,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
                         cart = new Cart();
                         cart.setIdMenu(idProduk);
                         cart.setNamaMenu(nama);
+                        cart.setGambar(gambar);
                         cart.setQuantity(qty);
                         cart.setHarga(harga);
                         cart.setPoin(poin);
@@ -141,6 +142,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
                         cart = new Cart();
                         cart.setIdMenu(idProduk);
                         cart.setNamaMenu(nama);
+                        cart.setGambar(gambar);
                         cart.setQuantity(qty);
                         cart.setHarga(harga);
                         cart.setPoin(poin);
@@ -206,7 +208,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
             for (int i = 0; i < data.length(); i++) {
                 JSONObject feedObj = (JSONObject) data.get(i);
                 String judul = feedObj.getString("judul");
-                String gambar = feedObj.getString("gambar");
+                gambar = feedObj.getString("gambar");
                 nama = feedObj.getString("nama_produk");
                 idProduk = feedObj.getString("produk_id");
                 harga = Integer.parseInt(feedObj.getString("harga"));

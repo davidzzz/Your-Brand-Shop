@@ -15,6 +15,7 @@ import java.util.List;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -243,6 +244,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 responseStreamReader.close();
                 responseStream.close();
                 loading.dismiss();
+                Intent Menu = new Intent(getApplicationContext(), MainActivity.class);
+                Menu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(Menu);
                 finish();
                 return true;
             } catch (Exception e) {

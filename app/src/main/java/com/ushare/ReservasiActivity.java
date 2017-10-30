@@ -228,15 +228,18 @@ public class ReservasiActivity extends AppCompatActivity {
 
     private void ambilData() {
         String URL = Constant.URLADMIN + "api/reservasi.php?key=" + Constant.KEY + "&tag=list";
+        loading = ProgressDialog.show(this, "Loading", "Sedang mengambil data", false, true);
         JsonObjectRequest jsonKate = new JsonObjectRequest(URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 list.clear();
                 parseJsonKategory(response);
+                loading.dismiss();
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                loading.dismiss();
             }
         });
         jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
