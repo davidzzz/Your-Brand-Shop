@@ -28,7 +28,7 @@
                     android:id="@+id/slider"
                     layout="@layout/render_type_text"
                     android:layout_width="match_parent"
-                    android:layout_height="250dp"
+                    android:layout_height="179dp"
                     custom:auto_cycle="true"
                     custom:indicator_visibility="visible"
                     custom:pager_animation="Accordion"
@@ -44,7 +44,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:background="@android:color/white"
+
                     android:layout_marginTop="5dp"
                     android:id="@+id/layout_flash_deal"
                     android:visibility="gone">
@@ -56,16 +56,26 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="PROMO"
+                            android:text="Flash Deal"
+                            android:textColor="@color/cpb_white"
                             android:textStyle="bold"
                             android:paddingLeft="10dp"
                             android:textSize="16sp"/>
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="berlaku dalam waktu"
+                            android:textColor="@color/cpb_white"
+                            android:paddingLeft="10dp"
+                            android:textSize="13sp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:paddingLeft="5dp"
                             android:id="@+id/waktu"
-                            android:textSize="12sp"/>
+                            android:textStyle="bold"
+                            android:textColor="@color/cpb_white"
+                            android:textSize="16sp"/>
                     </LinearLayout>
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/cardView"
