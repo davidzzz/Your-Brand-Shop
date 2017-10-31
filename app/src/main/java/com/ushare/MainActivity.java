@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             String minute = ((seconds / 60 < 10) ? "0" : "") + seconds / 60;
                             seconds %= 60;
                             String second = (seconds < 10 ? "0" : "") + seconds;
-                            waktu.setText("Berlaku dalam waktu " + day + ":" + hour + ":" + minute + ":" + second);
+                            waktu.setText(  day + ":" + hour + ":" + minute + ":" + second);
                         }
 
                         public void onFinish() {
