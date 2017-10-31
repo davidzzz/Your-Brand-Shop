@@ -1,6 +1,7 @@
 package com.ushare.adapter;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
@@ -18,6 +20,7 @@ import com.ushare.R;
 import com.ushare.TabActivity;
 import com.ushare.model.ItemOrder;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class OrderAdapter extends BaseAdapter {
@@ -54,20 +57,27 @@ public class OrderAdapter extends BaseAdapter {
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.item_order, null);
+        DecimalFormat formatduit = new DecimalFormat();
         Button btnCancel =(Button)convertView.findViewById(R.id.btnCancel);
         TextView name = (TextView) convertView.findViewById(R.id.textTitle);
         TextView status = (TextView) convertView.findViewById(R.id.txtStatus);
         TextView txtTotal = (TextView) convertView.findViewById(R.id.txtTotal);
         TextView txtTime = (TextView) convertView.findViewById(R.id.txtTime);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
         final ItemOrder item = itemList.get(position);
-        name.setText(item.getNama()+" ");
-        if(item.getStatus().equals("PROCESSED")){
+        if (item.isOnTheSpot()) {
+            icon.setBackgroundResource(R.drawable.checklist);
+        } else {
+            icon.setBackgroundResource(R.drawable.delivery);
+        }
+        name.setText(item.getNama() + "");
+        if (item.getStatus().equals("PROCESSED")) {
             btnCancel.setText("Accept Delivery");
-        }else{
+        } else {
             btnCancel.setText("CANCEL");
         }
         status.setText(item.getStatus());
-        txtTotal.setText("Rp "+item.getTotal());
+        txtTotal.setText("Rp " + formatduit.format(item.getTotal()));
         txtTime.setText(item.getTanggal().replace("-","/"));
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

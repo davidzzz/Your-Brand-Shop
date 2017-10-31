@@ -7,12 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
 import com.ushare.R;
 import com.ushare.model.ItemOrder;
 
+import java.text.DecimalFormat;
 import java.util.List;
 
 public class HistoryAdapter extends BaseAdapter {
@@ -46,11 +48,18 @@ public class HistoryAdapter extends BaseAdapter {
             inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (convertView == null)
             convertView = inflater.inflate(R.layout.item_history, null);
+        DecimalFormat formatduit = new DecimalFormat();
         TextView name = (TextView) convertView.findViewById(R.id.textTitle);
         TextView status = (TextView) convertView.findViewById(R.id.txtStatus);
         TextView txtTotal = (TextView) convertView.findViewById(R.id.txtTotal);
         TextView txtTime = (TextView) convertView.findViewById(R.id.txtTime);
+        ImageView icon = (ImageView) convertView.findViewById(R.id.icon);
         final ItemOrder item = itemList.get(position);
+        if (item.isOnTheSpot()) {
+            icon.setBackgroundResource(R.drawable.checklist);
+        } else {
+            icon.setBackgroundResource(R.drawable.delivery);
+        }
         name.setText(item.getNama()+" ");
         if(item.getStatus().equals("DELIVERY")){
             status.setText("ORDER DONE");
@@ -58,9 +67,8 @@ public class HistoryAdapter extends BaseAdapter {
         }else{
             status.setText(item.getStatus());
         }
-        txtTotal.setText("Rp "+item.getTotal());
+        txtTotal.setText("Rp " + formatduit.format(item.getTotal()));
         txtTime.setText(item.getTanggal().replace("-","/"));
         return convertView;
     }
-
 }
