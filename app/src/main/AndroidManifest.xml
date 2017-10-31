@@ -146,7 +146,8 @@
         <activity android:name=".ProdukDetailActivity" />
         <activity android:name=".LupaPasswordActivity" />
         <activity android:name=".SentPoinActivity" />
-        <activity android:name=".KonfirmasiPoinActivity"></activity>
+        <activity android:name=".KonfirmasiPoinActivity" />
+        <activity android:name=".SentPoinOrderActivity"></activity>
     </application>
 
 </manifest>
