@@ -126,6 +126,11 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/main_color_grey_300" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/qr_code"
+        android:layout_gravity="center"/>
 
 
 </LinearLayout>

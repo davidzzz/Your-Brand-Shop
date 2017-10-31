@@ -1,6 +1,7 @@
 package com.ushare;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
@@ -18,6 +20,10 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.ushare.app.myapp;
 import com.ushare.util.Constant;
 import com.ushare.util.SessionManager;
@@ -28,6 +34,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
 
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MenuActivity.class.getSimpleName();
@@ -74,10 +83,40 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         } else {
             lytOrder.setVisibility(View.GONE);
             lytMenu.setVisibility(View.GONE);
+            try {
+                ImageView qrCode = (ImageView) findViewById(R.id.qr_code);
+                Bitmap bm = encodeAsBitmap(id_user);
+                if(bm != null) {
+                    qrCode.setImageBitmap(bm);
+                }
+            } catch (WriterException e) {
+                Toast.makeText(this, "Gagal menampilkan QR Code", Toast.LENGTH_SHORT).show();
+            }
         }
         lytOrder.setOnClickListener(this);
         lytMenu.setOnClickListener(this);
         lytProfile.setOnClickListener(this);
+    }
+
+    Bitmap encodeAsBitmap(String str) throws WriterException {
+        BitMatrix result;
+        try {
+            result = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, 150, 150, null);
+        } catch (IllegalArgumentException iae) {
+            return null;
+        }
+        int w = result.getWidth();
+        int h = result.getHeight();
+        int[] pixels = new int[w * h];
+        for (int y = 0; y < h; y++) {
+            int offset = y * w;
+            for (int x = 0; x < w; x++) {
+                pixels[offset + x] = result.get(x, y) ? BLACK : WHITE;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, 150, 0, 0, w, h);
+        return bitmap;
     }
 
     private void ambilData() {
