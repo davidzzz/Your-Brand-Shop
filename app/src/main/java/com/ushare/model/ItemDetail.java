@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class ItemDetail implements Parcelable {
-    private int qty, subtotal;
+    private int qty, subtotal, poin;
     private String nama;
 
     public ItemDetail() {}
@@ -33,6 +33,14 @@ public class ItemDetail implements Parcelable {
         return subtotal;
     }
 
+    public void setPoin(int poin) {
+        this.poin = poin;
+    }
+
+    public int getPoin() {
+        return poin;
+    }
+
     @Override
     public String toString() {
         return getQty() + " item " + getNama() + " = Rp. " + getSubtotal();
@@ -46,6 +54,7 @@ public class ItemDetail implements Parcelable {
         out.writeString(nama);
         out.writeInt(qty);
         out.writeInt(subtotal);
+        out.writeInt(poin);
     }
 
     public static final Parcelable.Creator<ItemDetail> CREATOR = new Parcelable.Creator<ItemDetail>() {
@@ -62,5 +71,6 @@ public class ItemDetail implements Parcelable {
         nama = in.readString();
         qty = in.readInt();
         subtotal = in.readInt();
+        poin = in.readInt();
     }
 }

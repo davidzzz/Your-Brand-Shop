@@ -6,7 +6,7 @@ import android.os.Parcelable;
 import java.util.ArrayList;
 
 public class ItemOrder implements Parcelable {
-    private String id, nama, status, tanggal, catatan, address, telp, gcm_id;
+    private String id, nama, status, tanggal, catatan, address, telp, gcm_id, idUser;
     private int total, ttlongkir;
     private boolean onTheSpot;
     private ArrayList<ItemDetail> itemDetail = new ArrayList<>();
@@ -109,12 +109,21 @@ public class ItemOrder implements Parcelable {
         this.onTheSpot = onTheSpot;
     }
 
+    public void setIdUser(String idUser) {
+        this.idUser = idUser;
+    }
+
+    public String getIdUser() {
+        return idUser;
+    }
+
     public int describeContents() {
         return 0;
     }
 
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(id);
+        out.writeString(idUser);
         out.writeString(nama);
         out.writeInt(total);
         out.writeString(status);
@@ -140,6 +149,7 @@ public class ItemOrder implements Parcelable {
 
     private ItemOrder(Parcel in) {
         id = in.readString();
+        idUser = in.readString();
         nama = in.readString();
         total = in.readInt();
         status = in.readString();

@@ -2,6 +2,7 @@ package com.ushare;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -30,12 +31,13 @@ import com.ushare.util.SessionManager;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Locale;
 import java.util.Map;
 
 public class OrderDetail extends AppCompatActivity {
     private Toolbar toolbar;
     TextView txtTotal, txtName, txtStatus,textNotes,txtbiodata,txtOngkir,txtSubtotal, orderList;
-    Button btnCancel, btnAcpt;
+    Button btnCancel, btnAcpt, btnSend;
     String ID, URL_CANCEL, userid, URL_ACCEPT;
     SessionManager session;
     HashMap<String, String> user;
@@ -67,6 +69,7 @@ public class OrderDetail extends AppCompatActivity {
         URL_CANCEL = Constant.URLADMIN + "api/cancel_seller.php";
         btnAcpt = (Button) findViewById(R.id.btnAcpt);
         btnCancel = (Button) findViewById(R.id.btnCancel);
+        btnSend = (Button) findViewById(R.id.btnSend);
         item_order = getIntent().getParcelableExtra("item_order");
         ID = item_order.getId();
         String akses = user.get(SessionManager.KEY_AKSES);
@@ -77,6 +80,23 @@ public class OrderDetail extends AppCompatActivity {
             lytbiodata.setVisibility(View.GONE);
             LinearLayout layout_ongkir = (LinearLayout) findViewById(R.id.layout_ongkir);
             layout_ongkir.setVisibility(View.GONE);
+            if (akses.equals("2")) {
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String formatter = String.format(Locale.US, "%04d", Integer.parseInt(item_order.getIdUser()));
+                        String nama_user = item_order.getNama().toUpperCase();
+                        Intent intent = new Intent(OrderDetail.this, SentPoinOrderActivity.class);
+                        intent.putParcelableArrayListExtra("item_detail", item_order.getItemDetail());
+                        intent.putExtra("nomor_user", formatter + nama_user.charAt(0) + nama_user.charAt(2));
+                        startActivity(intent);
+                    }
+                });
+            } else {
+                btnSend.setVisibility(View.GONE);
+            }
+        } else {
+            btnSend.setVisibility(View.GONE);
         }
         txtbiodata.setText("DETAIL BUYER \n\nAddress: " + item_order.getAddress() + "\nNo. Handphone : "+ item_order.getTelp());
         txtStatus.setText(item_order.getStatus().equals("") ? "PENDING" : item_order.getStatus());

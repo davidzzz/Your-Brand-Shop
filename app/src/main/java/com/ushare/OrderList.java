@@ -113,6 +113,7 @@ public class OrderList extends AppCompatActivity implements SwipeRefreshLayout.O
                     id = feedObj.getString("order_id");
                     item = new ItemOrder();
                     item.setId(feedObj.getString("order_id"));
+                    item.setIdUser(feedObj.getString("user_id"));
                     item.setNama(feedObj.getString("nama"));
                     item.setTotal(feedObj.getInt("total_order"));
                     item.setStatus(feedObj.getString("status_order"));
@@ -128,6 +129,7 @@ public class OrderList extends AppCompatActivity implements SwipeRefreshLayout.O
                 itemDetail.setNama(feedObj.getString("nama_produk"));
                 itemDetail.setQty(feedObj.getInt("qty"));
                 itemDetail.setSubtotal(feedObj.getInt("subtotal"));
+                itemDetail.setPoin(feedObj.getInt("poin") * feedObj.getInt("qty"));
                 item.setItemDetail(itemDetail);
             }
             itemList.add(item);

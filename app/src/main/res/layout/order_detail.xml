@@ -208,7 +208,6 @@
                 android:id="@+id/lytbtn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="bottom"
                 android:orientation="horizontal">
 
                 <Button
@@ -229,6 +228,23 @@
                     android:layout_weight="1"
                     android:background="@drawable/button_bg_fb"
                     android:text="Accept"
+                    android:textColor="@color/textColorPrimary" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <Button
+                    android:id="@+id/btnSend"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:padding="5dp"
+                    android:background="@drawable/add_selector"
+                    android:text="GO TO SENT POINT"
                     android:textColor="@color/textColorPrimary" />
             </LinearLayout>
 
