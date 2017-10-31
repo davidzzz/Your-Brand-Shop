@@ -145,6 +145,8 @@
         <activity android:name=".ReservasiActivity" />
         <activity android:name=".ProdukDetailActivity" />
         <activity android:name=".LupaPasswordActivity" />
+        <activity android:name=".SentPoinActivity" />
+        <activity android:name=".KonfirmasiPoinActivity"></activity>
     </application>
 
 </manifest>

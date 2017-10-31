@@ -42,7 +42,7 @@ import static android.graphics.Color.WHITE;
 public class MenuActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = MenuActivity.class.getSimpleName();
     private Toolbar toolbar;
-    private LinearLayout lytProfile, lytMenu, lytOrder;
+    private LinearLayout lytProfile, lytMenu, lytOrder, lytPoin;
     //ambil data dari session
     SessionManager session;
     HashMap<String, String> user;
@@ -71,7 +71,6 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         URL = Constant.URLADMIN + "api/order_list.php?key=" + Constant.KEY + "&tag=count";
         String formatter = String.format(Locale.US, "%04d", Integer.parseInt(id_user));
         txtnama.setText(nama_user);
-        txtkode.setText("USER ID : " + formatter + nama_user.charAt(0) + nama_user.charAt(2));
 
         Glide.with(this)
                 .load(photo != null ? photo : R.drawable.user)
@@ -80,13 +79,17 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         lytProfile = (LinearLayout) findViewById(R.id.lytprofile);
         lytMenu = (LinearLayout) findViewById(R.id.lytMenu);
         lytOrder = (LinearLayout) findViewById(R.id.lytOrder);
+        lytPoin = (LinearLayout) findViewById(R.id.lytPoin);
         if (akses.equals("2")) {
             lytMenu.setVisibility(View.VISIBLE);
             lytOrder.setVisibility(View.VISIBLE);
+            lytPoin.setVisibility(View.VISIBLE);
             ambilData();
         } else {
             lytOrder.setVisibility(View.GONE);
             lytMenu.setVisibility(View.GONE);
+            lytPoin.setVisibility(View.GONE);
+            txtkode.setText("USER ID : " + formatter + nama_user.charAt(0) + nama_user.charAt(2));
             try {
                 ImageView qrCode = (ImageView) findViewById(R.id.qr_code);
                 Bitmap bm = encodeAsBitmap(formatter + nama_user.charAt(0) + nama_user.charAt(2));
@@ -100,6 +103,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         lytOrder.setOnClickListener(this);
         lytMenu.setOnClickListener(this);
         lytProfile.setOnClickListener(this);
+        lytPoin.setOnClickListener(this);
     }
 
     Bitmap encodeAsBitmap(String str) throws WriterException {
@@ -161,6 +165,11 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.lytOrder:
                 Intent order = new Intent(this, OrderList.class);
                 startActivity(order);
+                overridePendingTransition(R.anim.open_next, R.anim.close_next);
+                break;
+            case R.id.lytPoin:
+                Intent poin = new Intent(this, SentPoinActivity.class);
+                startActivity(poin);
                 overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 break;
             default:

@@ -72,7 +72,6 @@
     <!--list order-->
     <LinearLayout
         android:id="@+id/lytOrder"
-        android:visibility="visible"
         android:padding="15dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -110,7 +109,6 @@
     <LinearLayout
         android:id="@+id/lytMenu"
         android:padding="15dp"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
@@ -124,6 +122,34 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:text="Your Menu"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:layout_marginLeft="15dp"
+            android:textSize="20sp"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/main_color_grey_300" />
+    <!--list menu atau produk-->
+    <LinearLayout
+        android:id="@+id/lytPoin"
+        android:padding="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/checklist" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Sent Poin"
             android:layout_gravity="center"
             android:textStyle="bold"
             android:layout_marginLeft="15dp"
