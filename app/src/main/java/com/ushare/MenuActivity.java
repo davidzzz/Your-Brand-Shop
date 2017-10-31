@@ -34,6 +34,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -47,7 +48,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
     HashMap<String, String> user;
     String akses, photo, nama_user,URL,id_user;
     ImageView imgProfile;
-    TextView txtnama,txtcount;
+    TextView txtnama,txtcount,txtkode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,18 +60,21 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         imgProfile = (ImageView) findViewById(R.id.imgProfile);
         txtnama = (TextView) findViewById(R.id.txtnama);
+        txtkode = (TextView) findViewById(R.id.userid);
         txtcount =(TextView) findViewById(R.id.txtcount);
         session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
         photo = user.get(SessionManager.KEY_PHOTO);
         akses = user.get(SessionManager.KEY_AKSES);
         id_user = user.get(SessionManager.KEY_PASSENGER_ID);
-        nama_user = user.get(SessionManager.KEY_NAME);
+        nama_user = user.get(SessionManager.KEY_NAME).toUpperCase();
         URL = Constant.URLADMIN + "api/order_list.php?key=" + Constant.KEY + "&tag=count";
+        String formatter = String.format(Locale.US, "%04d", Integer.parseInt(id_user));
         txtnama.setText(nama_user);
+        txtkode.setText("USER ID : " + formatter + nama_user.charAt(0) + nama_user.charAt(2));
 
         Glide.with(this)
-                .load(photo)
+                .load(photo != null ? photo : R.drawable.user)
                 .transform(new RoundImage(MenuActivity.this))
                 .into(imgProfile);
         lytProfile = (LinearLayout) findViewById(R.id.lytprofile);
@@ -85,7 +89,7 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             lytMenu.setVisibility(View.GONE);
             try {
                 ImageView qrCode = (ImageView) findViewById(R.id.qr_code);
-                Bitmap bm = encodeAsBitmap(id_user);
+                Bitmap bm = encodeAsBitmap(formatter + nama_user.charAt(0) + nama_user.charAt(2));
                 if(bm != null) {
                     qrCode.setImageBitmap(bm);
                 }

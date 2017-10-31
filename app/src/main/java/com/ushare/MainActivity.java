@@ -148,17 +148,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 Log.e(TAG,"ini id firebase "+regId);
 
-            if (photo != null) {
-                Glide.with(this)
-                        .load(photo)
-                        .transform(new RoundImage(MainActivity.this))
-                        .into(imghd);
-            }else{
-                Glide.with(this)
-                        .load(R.drawable.user)
-                        .transform(new RoundImage(MainActivity.this))
-                        .into(imghd);
-            }
+            Glide.with(this)
+                    .load(photo != null ? photo : R.drawable.user)
+                    .transform(new RoundImage(MainActivity.this))
+                    .into(imghd);
         } else {
             lytHd.setVisibility(View.GONE);
         }
