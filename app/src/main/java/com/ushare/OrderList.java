@@ -28,6 +28,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -116,12 +117,12 @@ public class OrderList extends AppCompatActivity implements SwipeRefreshLayout.O
                     item.setTotal(feedObj.getInt("total_order"));
                     item.setStatus(feedObj.getString("status_order"));
                     item.setTanggal(feedObj.getString("time"));
-                    item.setCash(feedObj.getInt("cash"));
                     item.setCatatan(feedObj.getString("notes"));
                     item.setAddress(feedObj.getString("address"));
-                    item.setTelp(feedObj.getString("telp"));
+                    item.setTelp(feedObj.getString("telp_order"));
                     item.setGcm_id(feedObj.getString("gcm"));
                     item.setTtlongkir(feedObj.getInt("ttl_ongkir"));
+                    item.setOnTheSpot(feedObj.getString("on_the_spot").equals("1"));
                 }
                 ItemDetail itemDetail = new ItemDetail();
                 itemDetail.setNama(feedObj.getString("nama_produk"));

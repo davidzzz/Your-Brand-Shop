@@ -25,6 +25,7 @@ import com.bumptech.glide.Glide;
 
 import com.ushare.adapter.OrderAdapter;
 import com.ushare.app.myapp;
+import com.ushare.model.ItemDetail;
 import com.ushare.model.ItemOrder;
 import com.ushare.util.Constant;
 import com.ushare.util.SessionManager;
@@ -33,6 +34,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -96,7 +98,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
                         loading.dismiss();
-                        Toast.makeText(getActivity(), s , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
                         ambilData();
                     }
                 },
@@ -105,7 +107,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
                     public void onErrorResponse(VolleyError volleyError) {
                         //Dismissing the progress dialog
                         loading.dismiss();
-                        Toast.makeText(getActivity(), "Server error, Please Try again.." , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Server error, Please Try again..", Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override
@@ -133,7 +135,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
                     public void onResponse(String s) {
                         //Disimissing the progress dialog
                         loading.dismiss();
-                        Toast.makeText(getActivity(), s , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), s, Toast.LENGTH_LONG).show();
                         ambilData();
                     }
                 },
@@ -142,7 +144,7 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
                     public void onErrorResponse(VolleyError volleyError) {
                         //Dismissing the progress dialog
                         loading.dismiss();
-                        Toast.makeText(getActivity(), "Server error, Please Try again.." , Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Server error, Please Try again..", Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override
@@ -184,18 +186,36 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
     }
 
     private void parseJsonKategory(JSONObject response) {
+        String id = "";
+        ItemOrder item = new ItemOrder();
         try {
             JSONArray feedArray = response.getJSONArray("data");
             for (int i = 0; i < feedArray.length(); i++) {
                 JSONObject feedObj = (JSONObject) feedArray.get(i);
-                ItemOrder item = new ItemOrder();
-                item.setId(feedObj.getString("order_id"));
-                item.setNama(feedObj.getString("nama"));
-                item.setTotal(feedObj.getInt("total_order"));
-                item.setStatus(feedObj.getString("status_order"));
-                item.setTanggal(feedObj.getString("time"));
-                itemList.add(item);
+                if (!feedObj.getString("order_id").equals(id)) {
+                    itemList.add(item);
+                    id = feedObj.getString("order_id");
+                    item = new ItemOrder();
+                    item.setId(feedObj.getString("order_id"));
+                    item.setNama(feedObj.getString("nama"));
+                    item.setTotal(feedObj.getInt("total_order"));
+                    item.setStatus(feedObj.getString("status_order"));
+                    item.setTanggal(feedObj.getString("time"));
+                    item.setCatatan(feedObj.getString("notes"));
+                    item.setAddress(feedObj.getString("address"));
+                    item.setTelp(feedObj.getString("telp_order"));
+                    item.setGcm_id(feedObj.getString("gcm"));
+                    item.setTtlongkir(feedObj.getInt("ttl_ongkir"));
+                    item.setOnTheSpot(feedObj.getString("on_the_spot").equals("1"));
+                }
+                ItemDetail itemDetail = new ItemDetail();
+                itemDetail.setNama(feedObj.getString("nama_produk"));
+                itemDetail.setQty(feedObj.getInt("qty"));
+                itemDetail.setSubtotal(feedObj.getInt("subtotal"));
+                item.setItemDetail(itemDetail);
             }
+            itemList.add(item);
+            itemList.remove(0);
             list.setAdapter(adapter);
         } catch (JSONException e) {
             e.printStackTrace();

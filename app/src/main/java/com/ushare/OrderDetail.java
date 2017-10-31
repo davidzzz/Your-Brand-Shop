@@ -27,19 +27,21 @@ import com.ushare.model.ItemOrder;
 import com.ushare.util.Constant;
 import com.ushare.util.SessionManager;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 public class OrderDetail extends AppCompatActivity {
     private Toolbar toolbar;
-    TextView txtTotal, txtName, txtStatus,txtCash,textNotes,txtbiodata,txtOngkir,txtSubtotal, orderList;
+    TextView txtTotal, txtName, txtStatus,textNotes,txtbiodata,txtOngkir,txtSubtotal, orderList;
     Button btnCancel, btnAcpt;
     String ID, URL_CANCEL, userid, URL_ACCEPT;
     SessionManager session;
     HashMap<String, String> user;
     LinearLayout lytbiodata,lytbtn;
     ItemOrder item_order;
+    DecimalFormat formatduit = new DecimalFormat();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,14 +55,13 @@ public class OrderDetail extends AppCompatActivity {
         session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
         userid = user.get(session.KEY_PASSENGER_ID);
-        lytbiodata =(LinearLayout)findViewById(R.id.lytbiodata);
+        lytbiodata = (LinearLayout)findViewById(R.id.lytbiodata);
         txtTotal = (TextView) findViewById(R.id.txtTotal);
-        txtCash =(TextView) findViewById(R.id.txtCash);
         txtName = (TextView) findViewById(R.id.txtName);
         txtStatus = (TextView) findViewById(R.id.txtStatus);
-        txtbiodata =(TextView)findViewById(R.id.txtbiodata);
-        textNotes =(TextView) findViewById(R.id.textNotes);
-        txtOngkir =(TextView)findViewById(R.id.txtOngkir);
+        txtbiodata = (TextView)findViewById(R.id.txtbiodata);
+        textNotes = (TextView) findViewById(R.id.textNotes);
+        txtOngkir = (TextView)findViewById(R.id.txtOngkir);
         txtSubtotal =(TextView)findViewById(R.id.txtSubtotal);
         orderList = (TextView) findViewById(R.id.orderList);
         URL_CANCEL = Constant.URLADMIN + "api/cancel_seller.php";
@@ -68,22 +69,22 @@ public class OrderDetail extends AppCompatActivity {
         btnCancel = (Button) findViewById(R.id.btnCancel);
         item_order = getIntent().getParcelableExtra("item_order");
         ID = item_order.getId();
-        if (item_order.getStatus().equals("")) {
-            lytbiodata.setVisibility(View.GONE);
-        } else if (item_order.getStatus().equals("CANCEL")) {
-            lytbiodata.setVisibility(View.GONE);
-            lytbtn.setVisibility(View.GONE);
-        } else {
+        String akses = user.get(SessionManager.KEY_AKSES);
+        if (akses.equals("1") || item_order.getStatus().equals("CANCEL") || item_order.getStatus().equals("DONE")) {
             lytbtn.setVisibility(View.GONE);
         }
-        txtbiodata.setText("DETAIL BUYER \n\n"+"Address :\n" + item_order.getAddress() + "\n"+ item_order.getTelp());
+        if (item_order.isOnTheSpot()) {
+            lytbiodata.setVisibility(View.GONE);
+            LinearLayout layout_ongkir = (LinearLayout) findViewById(R.id.layout_ongkir);
+            layout_ongkir.setVisibility(View.GONE);
+        }
+        txtbiodata.setText("DETAIL BUYER \n\nAddress: " + item_order.getAddress() + "\nNo. Handphone : "+ item_order.getTelp());
         txtStatus.setText(item_order.getStatus().equals("") ? "PENDING" : item_order.getStatus());
         txtName.setText("Nama : " + item_order.getNama());
         textNotes.setText(item_order.getCatatan());
-        txtTotal.setText(String.valueOf(item_order.getTotal()));
-        txtCash.setText(String.valueOf(item_order.getCash()));
-        txtOngkir.setText(String.valueOf(item_order.getTtlongkir()));
-        txtSubtotal.setText(String.valueOf(item_order.getTtlongkir() + item_order.getTotal()));
+        txtTotal.setText(String.valueOf(formatduit.format(item_order.getTotal())));
+        txtOngkir.setText(String.valueOf(formatduit.format(item_order.getTtlongkir())));
+        txtSubtotal.setText(String.valueOf(formatduit.format(item_order.getTtlongkir() + item_order.getTotal())));
         String itemList = item_order.getItemDetail().toString();
         orderList.setText(itemList.substring(1, itemList.length() - 1).replace(", ", "\n"));
         orderList.setBackgroundColor(Color.parseColor("#ffffff"));
@@ -119,7 +120,7 @@ public class OrderDetail extends AppCompatActivity {
                                     public void onErrorResponse(VolleyError volleyError) {
                                         //Dismissing the progress dialog
                                         loading.dismiss();
-                                        Toast.makeText(OrderDetail.this, "Server error" , Toast.LENGTH_LONG).show();
+                                        Toast.makeText(OrderDetail.this, "Server error", Toast.LENGTH_LONG).show();
                                     }
                                 }){
                             @Override
@@ -129,7 +130,7 @@ public class OrderDetail extends AppCompatActivity {
                                 Map<String,String> params = new Hashtable<String, String>();
                                 //Adding parameters
                                 params.put("order_id", ID);
-                                params.put("gcm", Constant.gcm);
+                                params.put("gcm", item_order.getGcm_id());
                                 params.put("key", Constant.KEY);
                                 params.put("user_id", userid);
                                 //returning parameters
@@ -168,7 +169,7 @@ public class OrderDetail extends AppCompatActivity {
                     public void onErrorResponse(VolleyError volleyError) {
                         //Dismissing the progress dialog
                         loading.dismiss();
-                        Toast.makeText(OrderDetail.this, "Server error" , Toast.LENGTH_LONG).show();
+                        Toast.makeText(OrderDetail.this, "Server error", Toast.LENGTH_LONG).show();
                     }
                 }){
             @Override
@@ -179,7 +180,7 @@ public class OrderDetail extends AppCompatActivity {
                 //Adding parameters
                 params.put("order_id", ID);
                 params.put("key", Constant.KEY);
-                params.put("gcm", Constant.gcm);
+                params.put("gcm", item_order.getGcm_id());
                 //returning parameters
                 return params;
             }

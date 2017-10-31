@@ -7,7 +7,8 @@ import java.util.ArrayList;
 
 public class ItemOrder implements Parcelable {
     private String id, nama, status, tanggal, catatan, address, telp, gcm_id;
-    private int total, ttlongkir, cash;
+    private int total, ttlongkir;
+    private boolean onTheSpot;
     private ArrayList<ItemDetail> itemDetail = new ArrayList<>();
 
     public ItemOrder() {}
@@ -60,14 +61,6 @@ public class ItemOrder implements Parcelable {
         this.itemDetail.add(itemDetail);
     }
 
-    public int getCash() {
-        return cash;
-    }
-
-    public void setCash(int cash) {
-        this.cash = cash;
-    }
-
     public String getCatatan() {
         return catatan;
     }
@@ -108,6 +101,14 @@ public class ItemOrder implements Parcelable {
         this.ttlongkir = ttlongkir;
     }
 
+    public boolean isOnTheSpot() {
+        return onTheSpot;
+    }
+
+    public void setOnTheSpot(boolean onTheSpot) {
+        this.onTheSpot = onTheSpot;
+    }
+
     public int describeContents() {
         return 0;
     }
@@ -119,12 +120,12 @@ public class ItemOrder implements Parcelable {
         out.writeString(status);
         out.writeString(tanggal);
         out.writeList(itemDetail);
-        out.writeInt(cash);
         out.writeString(catatan);
         out.writeString(address);
         out.writeString(telp);
         out.writeString(gcm_id);
         out.writeInt(ttlongkir);
+        out.writeByte((byte)(onTheSpot ? 1 : 0));
     }
 
     public static final Parcelable.Creator<ItemOrder> CREATOR = new Parcelable.Creator<ItemOrder>() {
@@ -144,11 +145,11 @@ public class ItemOrder implements Parcelable {
         status = in.readString();
         tanggal = in.readString();
         itemDetail = in.readArrayList(ItemDetail.class.getClassLoader());
-        cash = in.readInt();
         catatan = in.readString();
         address = in.readString();
         telp = in.readString();
         gcm_id = in.readString();
         ttlongkir = in.readInt();
+        onTheSpot = in.readByte() == 1;
     }
 }
