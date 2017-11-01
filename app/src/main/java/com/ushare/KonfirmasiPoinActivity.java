@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.ushare.app.myapp;
+import com.ushare.model.Cart;
 import com.ushare.model.ItemDetail;
 import com.ushare.model.ItemOrder;
 import com.ushare.util.Constant;
@@ -27,11 +29,20 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 public class KonfirmasiPoinActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView teksNomorResi, teksTotalOrder, teksPoin, teksNomorUser, teksNama, teksNoHP;
     Button konfirmasi;
-    String URL, URLPOIN, nomorResi, totalOrder, poin, nomorUser, id;
+    String URL, URLPOIN, nomorResi, totalOrder, poin, nomorUser, id, idOrder;
+    ProgressDialog loading;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,12 +64,13 @@ public class KonfirmasiPoinActivity extends AppCompatActivity {
         totalOrder = getIntent().getStringExtra("total");
         poin = getIntent().getStringExtra("poin");
         nomorUser = getIntent().getStringExtra("nomorUser");
+        idOrder = getIntent().getStringExtra("idOrder");
         teksNomorResi.setText(nomorResi);
         teksTotalOrder.setText("Rp. " + totalOrder);
         teksPoin.setText(poin + " poin");
         teksNomorUser.setText(nomorUser);
         URL = Constant.URLAPI + "key=" + Constant.KEY + "&tag=user&nomorUser=" + nomorUser;
-        URLPOIN = Constant.URLAPI + "key=" + Constant.KEY + "&tag=updatePoin";
+        URLPOIN = Constant.URLADMIN + "api/konfirmasi_poin.php";
         getDataUser();
         konfirmasi.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +80,8 @@ public class KonfirmasiPoinActivity extends AppCompatActivity {
                 alert.setMessage("Apakah data transaksi sudah sesuai?");
                 alert.setPositiveButton("YA", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        updatePoin();
+                        loading = ProgressDialog.show(KonfirmasiPoinActivity.this, "Loading", "Mengupdate poin user", false, false);
+                        new UpdatePoin().execute();
                     }
                 });
 
@@ -82,24 +95,58 @@ public class KonfirmasiPoinActivity extends AppCompatActivity {
         });
     }
 
-    public void updatePoin(){
-        final ProgressDialog loading = ProgressDialog.show(this, "Loading", "Mengupdate poin user", false, false);
-        JsonObjectRequest jsonKate = new JsonObjectRequest(URLPOIN + "&id=" + id + "&poin=" + poin, new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
+    class UpdatePoin extends AsyncTask<Void,Void,Boolean> {
+        String response;
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                java.net.URL url = new URL(URLPOIN);
+                HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                httpURLConnection.connect();
+
+                String parameter = "id=" + id + "&poin=" + poin + "&total=" + totalOrder + "&nomor=" + nomorResi + "&key=" + Constant.KEY;
+                if (idOrder != null) {
+                    parameter += "&idOrder=" + idOrder;
+                }
+                OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
+                writer.write(parameter);
+                writer.flush();
+                writer.close();
+
+                InputStream responseStream = new BufferedInputStream(httpURLConnection.getInputStream());
+                BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
+                String line = "";
+                StringBuilder stringBuilder = new StringBuilder();
+                while ((line = responseStreamReader.readLine()) != null) {
+                    stringBuilder.append(line).append("\n");
+                }
+                response = stringBuilder.toString();
+                responseStreamReader.close();
+                responseStream.close();
                 loading.dismiss();
-                Toast.makeText(KonfirmasiPoinActivity.this, "Poin berhasil ditambahkan", Toast.LENGTH_SHORT).show();
+                Intent Menu = new Intent(getApplicationContext(), MainActivity.class);
+                Menu.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(Menu);
                 finish();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
+                return true;
+            } catch (Exception e) {
                 loading.dismiss();
-                Toast.makeText(KonfirmasiPoinActivity.this, "Poin tidak berhasil ditambahkan", Toast.LENGTH_SHORT).show();
+                return false;
             }
-        });
-        jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        myapp.getInstance().addToRequestQueue(jsonKate);
+        }
+
+        @Override
+        public void onPostExecute(Boolean result) {
+            if (result != null && result) {
+                Toast.makeText(KonfirmasiPoinActivity.this, response, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(KonfirmasiPoinActivity.this, "Poin tidak berhasil ditambahkan", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public void getDataUser(){

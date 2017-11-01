@@ -33,7 +33,7 @@ import java.util.List;
 
 public class SentPoinOrderActivity extends AppCompatActivity {
     Toolbar toolbar;
-    String nomorUser;
+    String nomorUser, idOrder;
     EditText teksTransaksi;
     TextView teksTotal, teksPoin;
     Button btnSend;
@@ -57,6 +57,7 @@ public class SentPoinOrderActivity extends AppCompatActivity {
         listview = (ListView) findViewById(R.id.listview);
         item_detail = getIntent().getParcelableArrayListExtra("item_detail");
         nomorUser = getIntent().getStringExtra("nomor_user");
+        idOrder = getIntent().getStringExtra("id_order");
         for (int i = 0; i < item_detail.size(); i++) {
             total += item_detail.get(i).getSubtotal();
             poin += item_detail.get(i).getPoin();
@@ -72,6 +73,7 @@ public class SentPoinOrderActivity extends AppCompatActivity {
                 if (nomor.length() > 0) {
                     Intent intent = new Intent(SentPoinOrderActivity.this, KonfirmasiPoinActivity.class);
                     intent.putExtra("nomor", nomor);
+                    intent.putExtra("idOrder", idOrder);
                     intent.putExtra("total", String.valueOf(total));
                     intent.putExtra("poin", String.valueOf(poin));
                     intent.putExtra("nomorUser", nomorUser);

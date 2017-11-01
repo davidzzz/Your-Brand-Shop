@@ -89,6 +89,7 @@ public class OrderDetail extends AppCompatActivity {
                         Intent intent = new Intent(OrderDetail.this, SentPoinOrderActivity.class);
                         intent.putParcelableArrayListExtra("item_detail", item_order.getItemDetail());
                         intent.putExtra("nomor_user", formatter + nama_user.charAt(0) + nama_user.charAt(2));
+                        intent.putExtra("id_order", item_order.getId());
                         startActivity(intent);
                     }
                 });
