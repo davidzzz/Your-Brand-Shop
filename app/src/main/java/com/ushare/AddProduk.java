@@ -43,7 +43,7 @@ public class AddProduk extends AppCompatActivity {
     Button btnAdd;
     Spinner spin;
     String nama, price, status, halalStatus;
-    String sub_id;
+    String sub_id, userid;
     EditText edtTitle, edtPrice;
     RadioGroup grup, grup2;
     RadioButton rdStatus, rdStatus1, rdStatus2;
@@ -66,6 +66,7 @@ public class AddProduk extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
+        userid = user.get(SessionManager.KEY_PASSENGER_ID);
         btnAdd = (Button) findViewById(R.id.btnAdd);
         edtTitle = (EditText) findViewById(R.id.edtTitle);// ini nama produk
         edtPrice = (EditText) findViewById(R.id.edtPrice);// ini harga barang
@@ -143,6 +144,7 @@ public class AddProduk extends AppCompatActivity {
                 params.put("halal", halalStatus);
                 params.put("key", Constant.KEY);
                 params.put("produk_id", id_menu);
+                params.put("idUser", userid);
                 //returning parameters
                 return params;
             }
@@ -248,6 +250,7 @@ public class AddProduk extends AppCompatActivity {
                 //Adding parameters
                 params.put("id", id_menu);
                 params.put("key", Constant.KEY);
+                params.put("idUser", userid);
                 //returning parameters
                 return params;
             }
