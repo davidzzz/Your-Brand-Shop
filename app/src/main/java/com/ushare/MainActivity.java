@@ -30,6 +30,7 @@ import com.ushare.util.Constant;
 import com.ushare.util.EasyPermission;
 import com.ushare.util.SessionManager;
 import com.ushare.util.Utils;
+import com.ushare.view.ExpandableHeightGridView;
 import com.ushare.view.RoundImage;
 
 import android.Manifest;
@@ -91,7 +92,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     SessionManager session;
     HashMap<String, String> user;
     String photo, akses,fcmid,id,URL_TOKEN,msg;
-    private GridView listView;
+    private ExpandableHeightGridView gridView;
     private List<ItemSub> itemList;
     private ItemSub object;
     private SubAdapter adapter;
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         URL = Constant.URLAPI + "key=" + Constant.KEY + "&tag=" + Constant.TAG_PROMO;
         URLKATE = Constant.URLAPI + "key=" + Constant.KEY + "&tag=" + Constant.TAG_SUB;
         URLFD = Constant.URLADMIN + "api/flash_deal.php?key=" + Constant.KEY + "&tag=list";
-        listView = (GridView) mSwipeRefreshLayout.findViewById(R.id.gridView1);
+        gridView = (ExpandableHeightGridView) mSwipeRefreshLayout.findViewById(R.id.gridView1);
         itemList = new ArrayList<ItemSub>();
         adapter = new SubAdapter(this, itemList, colorValue);
         mSwipeRefreshLayout.post(new Runnable() {
@@ -203,12 +204,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } else {
                     mSwipeRefreshLayout.setRefreshing(false);
                     alert.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.GONE);
+                    gridView.setVisibility(View.GONE);
                 }
             }
         });
         if (akses != null && akses.equals("1")) {
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     object = itemList.get(position);
@@ -304,7 +305,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public void onErrorResponse(VolleyError error) {
                     mSwipeRefreshLayout.setRefreshing(false);
                     alert.setVisibility(View.VISIBLE);
-                    listView.setVisibility(View.GONE);
+                    gridView.setVisibility(View.GONE);
                 }
             });
             jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -326,7 +327,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 itemList.add(item);
             }
             // notify data changes to list adapater
-            listView.setAdapter(adapter);
+            gridView.setAdapter(adapter);
+            gridView.setExpanded(true);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -334,7 +336,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //listView.setExpanded(true);
         adapter.notifyDataSetChanged();
         alert.setVisibility(View.GONE);
-        listView.setVisibility(View.VISIBLE);
+        gridView.setVisibility(View.VISIBLE);
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
@@ -769,7 +771,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     protected void onDestroy() {
-        listView.setAdapter(null);
+        gridView.setAdapter(null);
         mDemoSlider.stopAutoCycle();
         mLvDrawerMenu.setAdapter(null);
         Glide.get(this).clearMemory();
