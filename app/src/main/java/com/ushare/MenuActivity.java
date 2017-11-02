@@ -89,10 +89,10 @@ public class MenuActivity extends AppCompatActivity implements View.OnClickListe
             lytOrder.setVisibility(View.GONE);
             lytMenu.setVisibility(View.GONE);
             lytPoin.setVisibility(View.GONE);
-            txtkode.setText("USER ID : " + formatter + nama_user.charAt(0) + nama_user.charAt(2));
+            txtkode.setText("USER ID : " + nama_user.charAt(0) + nama_user.charAt(2) + formatter);
             try {
                 ImageView qrCode = (ImageView) findViewById(R.id.qr_code);
-                Bitmap bm = encodeAsBitmap(formatter + nama_user.charAt(0) + nama_user.charAt(2));
+                Bitmap bm = encodeAsBitmap(nama_user.charAt(0) + nama_user.charAt(2) + formatter);
                 if(bm != null) {
                     qrCode.setImageBitmap(bm);
                 }

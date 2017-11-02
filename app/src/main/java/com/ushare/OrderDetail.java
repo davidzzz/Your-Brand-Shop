@@ -88,7 +88,7 @@ public class OrderDetail extends AppCompatActivity {
                         String nama_user = item_order.getNama().toUpperCase();
                         Intent intent = new Intent(OrderDetail.this, SentPoinOrderActivity.class);
                         intent.putParcelableArrayListExtra("item_detail", item_order.getItemDetail());
-                        intent.putExtra("nomor_user", formatter + nama_user.charAt(0) + nama_user.charAt(2));
+                        intent.putExtra("nomor_user", nama_user.charAt(0) + nama_user.charAt(2) + formatter);
                         intent.putExtra("id_order", item_order.getId());
                         startActivity(intent);
                     }
