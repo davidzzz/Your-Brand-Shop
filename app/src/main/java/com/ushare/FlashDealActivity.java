@@ -55,7 +55,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
     private Toolbar toolbar;
     String id, URL, nama, idProduk, gambar;
     private SliderLayout mDemoSlider;
-    private TextView teksNama, teksHarga, teksHargaAsli, teksPoin, teksQty, teksSisa, deskripsi, total;
+    private TextView teksNama, teksTanggal, teksHarga, teksHargaAsli, teksPoin, teksQty, teksSisa, deskripsi, total;
     private Button order;
     ArrayList<Cart> cartList;
     int harga, qty, poin, totalPoin = 0, item, sisa;
@@ -74,6 +74,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
         getSupportActionBar().setTitle(getIntent().getStringExtra("nama"));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         teksNama = (TextView) findViewById(R.id.nama);
+        teksTanggal = (TextView) findViewById(R.id.tanggal);
         teksHarga = (TextView) findViewById(R.id.harga);
         teksHargaAsli = (TextView) findViewById(R.id.harga_asli);
         teksPoin = (TextView) findViewById(R.id.poin);
@@ -208,6 +209,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
             for (int i = 0; i < data.length(); i++) {
                 JSONObject feedObj = (JSONObject) data.get(i);
                 String judul = feedObj.getString("judul");
+                String tanggal = feedObj.getString("tanggal_akhir");
                 gambar = feedObj.getString("gambar");
                 nama = feedObj.getString("nama_produk");
                 idProduk = feedObj.getString("produk_id");
@@ -219,6 +221,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
                 progressBar.setProgress(sisa);
                 teksSisa.setText(sisa + " / " + item);
                 teksNama.setText(nama);
+                teksTanggal.setText(tanggal.substring(0, 10));
                 teksHarga.setText("Rp. " + harga);
                 teksHargaAsli.setText("Rp. " + feedObj.getString("harga_asli"), TextView.BufferType.SPANNABLE);
                 teksPoin.setText("Poin : " + poin);
