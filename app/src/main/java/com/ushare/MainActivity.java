@@ -1,6 +1,7 @@
 package com.ushare;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -204,6 +205,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         gridView = (ExpandableHeightGridView) mSwipeRefreshLayout.findViewById(R.id.gridView1);
         itemList = new ArrayList<ItemSub>();
         adapter = new SubAdapter(this, itemList, colorValue);
+        layoutStatistik.setVisibility(View.GONE);
         mSwipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
@@ -227,7 +229,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     startActivity(intentlist);
                 }
             });
-            layoutStatistik.setVisibility(View.GONE);
         }
 
         listFlashDeal = new ArrayList<>();
@@ -326,24 +327,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     private void statistik() {
-        JsonObjectRequest jsonKate = new JsonObjectRequest(URLKATE, new Response.Listener<JSONObject>() {
+        JsonObjectRequest jsonKate = new JsonObjectRequest(URLSTAT, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try{
-                        int totalKategori = response.getInt("totalKategori");
-                        int totalProduk = response.getInt("totalProduk");
-                        int totalOrder = response.getInt("totalOrder");
-                        int totalValue = response.getInt("totalValue");
+                        DecimalFormat formatduit = new DecimalFormat();
+                        JSONObject feedObj = response.getJSONObject("data");
+                        String totalKategori = feedObj.getString("totalKategori");
+                        String totalProduk = feedObj.getString("totalProduk");
+                        String totalOrder = feedObj.getString("totalOrder");
+                        String totalValue = feedObj.getString("totalValue");
                         TextView teksKategori = (TextView) findViewById(R.id.total_kategori);
                         TextView teksProduk = (TextView) findViewById(R.id.total_produk);
                         TextView teksOrder = (TextView) findViewById(R.id.total_order);
                         TextView teksValue = (TextView) findViewById(R.id.total_value);
-                        teksKategori.setText(totalKategori + "");
-                        teksProduk.setText(totalProduk + "");
-                        teksOrder.setText(totalOrder + "");
-                        teksValue.setText("Rp. " + totalValue);
+                        teksKategori.setText(totalKategori);
+                        teksProduk.setText(totalProduk);
+                        teksOrder.setText(totalOrder);
+                        teksValue.setText("Rp. " + formatduit.format(Double.parseDouble(totalValue)));
+                        layoutStatistik.setVisibility(View.VISIBLE);
                     } catch (JSONException e) {
-
                     }
                 }
         }, new Response.ErrorListener() {
@@ -351,7 +354,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 public void onErrorResponse(VolleyError error) {
                     mSwipeRefreshLayout.setRefreshing(false);
                     alert.setVisibility(View.VISIBLE);
-                    layoutStatistik.setVisibility(View.GONE);
                 }
         });
         jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
