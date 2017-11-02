@@ -97,12 +97,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ItemSub object;
     private SubAdapter adapter;
     private SliderLayout mDemoSlider;
-    String URL, URLKATE, URLFD, nama_promo, gambar_promo;
+    String URL, URLKATE, URLFD, URLSTAT, nama_promo, gambar_promo;
     TextView alert;
     Adapter flashDealAdapter;
     ArrayList<FlashDeal> listFlashDeal;
     RecyclerView recyclerView;
     int colorValue;
+    LinearLayout layoutStatistik;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mLvDrawerMenu = (ListView) findViewById(R.id.lv_drawer_menu);
         View headerView = getLayoutInflater().inflate(R.layout.header_drawer, mLvDrawerMenu, false);
         LinearLayout lytHd = (LinearLayout) headerView.findViewById(R.id.lytHeader);
+        layoutStatistik = (LinearLayout) findViewById(R.id.layout_statistik);
         ImageView imghd = (ImageView) headerView.findViewById(R.id.image);
         TextView namaHeader = (TextView) headerView.findViewById(R.id.nama);
         TextView desHeader = (TextView) headerView.findViewById(R.id.des);
@@ -198,6 +200,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         URL = Constant.URLAPI + "key=" + Constant.KEY + "&tag=" + Constant.TAG_PROMO;
         URLKATE = Constant.URLAPI + "key=" + Constant.KEY + "&tag=" + Constant.TAG_SUB;
         URLFD = Constant.URLADMIN + "api/flash_deal.php?key=" + Constant.KEY + "&tag=list";
+        URLSTAT = Constant.URLAPI + "key=" + Constant.KEY + "&tag=statistik";
         gridView = (ExpandableHeightGridView) mSwipeRefreshLayout.findViewById(R.id.gridView1);
         itemList = new ArrayList<ItemSub>();
         adapter = new SubAdapter(this, itemList, colorValue);
@@ -224,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     startActivity(intentlist);
                 }
             });
+            layoutStatistik.setVisibility(View.GONE);
         }
 
         listFlashDeal = new ArrayList<>();
@@ -262,6 +266,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (akses != null && akses.equals("1")) {
                     KateData();
                     daftarFlashDeal();
+                } else if (akses != null && akses.equals("2")) {
+                    statistik();
                 } else {
                     mSwipeRefreshLayout.setRefreshing(false);
                 }
@@ -317,6 +323,39 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             myapp.getInstance().addToRequestQueue(jsonKate);
         }
+    }
+
+    private void statistik() {
+        JsonObjectRequest jsonKate = new JsonObjectRequest(URLKATE, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try{
+                        int totalKategori = response.getInt("totalKategori");
+                        int totalProduk = response.getInt("totalProduk");
+                        int totalOrder = response.getInt("totalOrder");
+                        int totalValue = response.getInt("totalValue");
+                        TextView teksKategori = (TextView) findViewById(R.id.total_kategori);
+                        TextView teksProduk = (TextView) findViewById(R.id.total_produk);
+                        TextView teksOrder = (TextView) findViewById(R.id.total_order);
+                        TextView teksValue = (TextView) findViewById(R.id.total_value);
+                        teksKategori.setText(totalKategori + "");
+                        teksProduk.setText(totalProduk + "");
+                        teksOrder.setText(totalOrder + "");
+                        teksValue.setText("Rp. " + totalValue);
+                    } catch (JSONException e) {
+
+                    }
+                }
+        }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    mSwipeRefreshLayout.setRefreshing(false);
+                    alert.setVisibility(View.VISIBLE);
+                    layoutStatistik.setVisibility(View.GONE);
+                }
+        });
+        jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myapp.getInstance().addToRequestQueue(jsonKate);
     }
 
     private void parseJsonKategory(JSONObject response) {
