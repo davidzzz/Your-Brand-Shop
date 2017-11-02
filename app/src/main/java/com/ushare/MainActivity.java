@@ -159,19 +159,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         mLvDrawerMenu.addHeaderView(headerView);
         menuItems = new ArrayList<DrawerMenuItem>();
         //buat list beda klo login dan tidak login
-        DrawerMenuItem test1 = new DrawerMenuItem(1, "Voucher", R.drawable.voucher);
-        DrawerMenuItem test2 = new DrawerMenuItem(2, "History", R.drawable.history);
-        DrawerMenuItem test3 = new DrawerMenuItem(2, "Kategori", R.drawable.category);
-        DrawerMenuItem test4 = new DrawerMenuItem(2, "Reservasi", R.drawable.reservation);
-        DrawerMenuItem test5 = new DrawerMenuItem(3, isLogin() ? "Logout" : "Login", R.drawable.user);
+        DrawerMenuItem test1 = new DrawerMenuItem(1, "Profile", R.drawable.qr);
+        DrawerMenuItem test2 = new DrawerMenuItem(2, "Voucher / Point", R.drawable.voucher);
+        DrawerMenuItem test3 = new DrawerMenuItem(3, "My Flash Deal", R.drawable.voucher);
+        DrawerMenuItem test4 = new DrawerMenuItem(4, "Kategori", R.drawable.category);
+        DrawerMenuItem test5 = new DrawerMenuItem(5, "Reservasi", R.drawable.reservation);
+        DrawerMenuItem test6 = new DrawerMenuItem(6, "History", R.drawable.history);
+        DrawerMenuItem test7 = new DrawerMenuItem(7, "About", R.drawable.about);
+        DrawerMenuItem test8 = new DrawerMenuItem(8, isLogin() ? "Logout" : "Login", R.drawable.user);
         menuItems.add(0, test1);
         menuItems.add(1, test2);
         menuItems.add(2, test3);
         menuItems.add(3, test4);
         menuItems.add(4, test5);
+        menuItems.add(5, test6);
+        menuItems.add(6, test7);
+        menuItems.add(7, test8);
         if (!isLogin()) {
-            DrawerMenuItem test6 = new DrawerMenuItem(4, "Daftar", R.drawable.user);
-            menuItems.add(5, test6);
+            DrawerMenuItem test9 = new DrawerMenuItem(9, "Daftar", R.drawable.user);
+            menuItems.add(8, test9);
         }
         mDrawerMenuAdapter = new DrawerMenuItemAdapter(MainActivity.this, R.layout.layout_drawer_menu_item, menuItems);
         mLvDrawerMenu.setAdapter(mDrawerMenuAdapter);
@@ -391,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             String minute = ((seconds / 60 < 10) ? "0" : "") + seconds / 60;
                             seconds %= 60;
                             String second = (seconds < 10 ? "0" : "") + seconds;
-                            waktu.setText(  day + ":" + hour + ":" + minute + ":" + second);
+                            waktu.setText(day + "d " + hour + "h " + minute + "m " + second + "s");
                         }
 
                         public void onFinish() {
@@ -519,15 +525,19 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         switch (position) {
             case 0:
+                mDrawerLayout.closeDrawer(mLvDrawerMenu);
+                break;
+            case 1:
                 if (isLogin()) {
                     Intent profile = new Intent(this, MenuActivity.class);
                     startActivity(profile);
-                    overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 } else {
-                    mDrawerLayout.closeDrawer(mLvDrawerMenu);
+                    Intent i = new Intent(this, LoginActivity.class);
+                    startActivity(i);
                 }
+                overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 break;
-            case 1:
+            case 2:
                 if (isLogin()) {
                     Intent intentVoucher = new Intent(this, TabActivity.class);
                     intentVoucher.putExtra("tipe", "voucher");
@@ -538,7 +548,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 break;
-            case 2:
+            case 3:
                 if (isLogin()) {
                     if (akses != null && akses.equals("2")) {
                         Intent intent = new Intent(this, OrderList.class);
@@ -554,7 +564,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 break;
-            case 3:
+            case 4:
                 if (isLogin()) {
                     Intent intent = new Intent(this, KategoriActivity.class);
                     intent.putExtra("color", colorValue);
@@ -565,7 +575,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 break;
-            case 4:
+            case 5:
                 if (isLogin()) {
                     Intent intent = new Intent(this, ReservasiActivity.class);
                     intent.putExtra("color", colorValue);
@@ -576,7 +586,29 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 }
                 overridePendingTransition(R.anim.open_next, R.anim.close_next);
                 break;
-            case 5:
+            case 6:
+                if (isLogin()) {
+                    if (akses != null && akses.equals("2")) {
+                        Intent intent = new Intent(this, OrderList.class);
+                        startActivity(intent);
+                    } else {
+                        Intent intentHistory = new Intent(this, TabActivity.class);
+                        intentHistory.putExtra("tipe", "history");
+                        startActivity(intentHistory);
+                    }
+                } else {
+                    Intent i = new Intent(this, LoginActivity.class);
+                    startActivity(i);
+                }
+                overridePendingTransition(R.anim.open_next, R.anim.close_next);
+                break;
+            case 7:
+                Intent intent = new Intent(this, HelpDetailActivity.class);
+                intent.putExtra("id", 1);
+                startActivity(intent);
+                overridePendingTransition(R.anim.open_next, R.anim.close_next);
+                break;
+            case 8:
                 if (isLogin()) {
                     Logout();
                     break;
@@ -586,7 +618,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     overridePendingTransition(R.anim.open_next, R.anim.close_next);
                     break;
                 }
-            case 6:
+            case 9:
                 if (!isLogin()) {
                     Intent i = new Intent(this, RegisterActivity.class);
                     startActivity(i);

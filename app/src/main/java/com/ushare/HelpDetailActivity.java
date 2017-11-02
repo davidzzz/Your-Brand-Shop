@@ -6,19 +6,29 @@ import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.ushare.app.myapp;
 import com.ushare.util.Constant;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class HelpDetailActivity extends AppCompatActivity {
+public class HelpDetailActivity extends AppCompatActivity implements OnMapReadyCallback {
     int id;
+    double latitude, longitude;
+    GoogleMap gMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +39,12 @@ public class HelpDetailActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("HELP");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         id = getIntent().getIntExtra("id", 0);
+        if (id == 1) {
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            mapFragment.getMapAsync(this);
+        }
         ambilData();
+        lokasiToko();
     }
 
     private void ambilData() {
@@ -49,6 +64,37 @@ public class HelpDetailActivity extends AppCompatActivity {
                     }
                 } catch (JSONException e) {
 
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+            }
+        });
+        jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myapp.getInstance().addToRequestQueue(jsonKate);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        gMap = googleMap;
+    }
+
+    private void lokasiToko() {
+        String URL_LOKASI = Constant.URLAPI + "key=" + Constant.KEY + "&tag=lokasiToko";
+        JsonObjectRequest jsonKate = new JsonObjectRequest(URL_LOKASI, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject feedObj = response.getJSONObject("data");
+                    latitude = feedObj.getDouble("latitude");
+                    longitude = feedObj.getDouble("long_latitude");
+
+                    LatLng lokasi = new LatLng(latitude, longitude);
+                    gMap.addMarker(new MarkerOptions().position(lokasi).title("Lokasi Toko"));
+                    gMap.moveCamera(CameraUpdateFactory.newLatLng(lokasi));
+                    gMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+                } catch (JSONException e) {
                 }
             }
         }, new Response.ErrorListener() {
