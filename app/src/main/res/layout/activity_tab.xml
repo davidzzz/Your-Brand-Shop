@@ -16,6 +16,12 @@
         android:layout_height="wrap_content"
         android:padding="10dp"
         android:id="@+id/layout_poin">
+
+        <TextView
+            android:layout_width="20dp"
+            android:layout_height="19dp"
+            android:background="@drawable/poin"
+            />
         <TextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,7 +34,7 @@
             android:id="@+id/spin"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="0.53"
             android:background="@drawable/add_selector"
             android:text="JACKPOT" />
     </LinearLayout>

@@ -5,7 +5,7 @@
     android:layout_height="wrap_content"
     android:layout_marginTop="5dp"
     android:layout_marginBottom="5dp"
-    android:background="@android:color/white">
+    android:background="@drawable/rounded_layout">
 
     <ImageView
         android:layout_width="match_parent"
@@ -19,7 +19,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="1">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -29,35 +30,50 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:id="@+id/nama"
-                android:textSize="13sp"
+                android:textSize="16sp"
                 android:textStyle="bold" />
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="19dp"
+                android:background="@drawable/poin"
+                />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/poin"
+                android:layout_marginTop="8dp"
                 android:textSize="13sp"
                 android:textStyle="bold" />
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="67dp"
+            android:layout_weight="0.98"
             android:gravity="end">
 
             <Button
                 android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="69dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="30dp"
                 android:background="@drawable/add_selector"
                 android:focusable="false"
-                android:text="BUY" />
+                android:text="BUY"
+                android:textColor="@color/cpb_white"
+                android:textStyle="bold" />
+
             <TextView
+                android:id="@+id/status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/status"
+                android:layout_marginRight="15dp"
                 android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginRight="5dp" />
+                android:textStyle="bold" />
+
         </LinearLayout>
     </LinearLayout>
 </LinearLayout>

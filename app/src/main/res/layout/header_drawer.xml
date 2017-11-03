@@ -33,14 +33,7 @@
                 android:layout_height="75dp"
                 android:layout_marginLeft="10dp"/>
 
-            <TextView
-                android:layout_width="266dp"
-                android:layout_height="match_parent"
-                android:text="Setting"
-                android:layout_marginLeft="10dp"
-                android:gravity="center_vertical"
-                android:textSize="17sp"
-                android:textColor="@color/textColorPrimary"/>
+
 
         </LinearLayout>
 
