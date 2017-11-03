@@ -49,7 +49,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class FlashDealActivity extends AppCompatActivity implements EasyPermission.OnPermissionResult, LocationListener {
     private Toolbar toolbar;
@@ -210,6 +214,11 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
                 JSONObject feedObj = (JSONObject) data.get(i);
                 String judul = feedObj.getString("judul");
                 String tanggal = feedObj.getString("tanggal_akhir");
+                SimpleDateFormat formatter = new SimpleDateFormat("dd MMMM yyyy", Locale.US);
+                Calendar c = Calendar.getInstance();
+                c.set(Calendar.YEAR, Integer.parseInt(tanggal.substring(0, 4)));
+                c.set(Calendar.MONTH, Integer.parseInt(tanggal.substring(5, 7)) - 1);
+                c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tanggal.substring(8, 10)));
                 gambar = feedObj.getString("gambar");
                 nama = feedObj.getString("nama_produk");
                 idProduk = feedObj.getString("produk_id");
@@ -221,7 +230,7 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
                 progressBar.setProgress(sisa);
                 teksSisa.setText(sisa + " / " + item);
                 teksNama.setText(nama);
-                teksTanggal.setText(tanggal.substring(0, 10));
+                teksTanggal.setText("Berlaku s/d " + formatter.format(c.getTime()));
                 teksHarga.setText("Rp. " + harga);
                 teksHargaAsli.setText("Rp. " + feedObj.getString("harga_asli"), TextView.BufferType.SPANNABLE);
                 teksPoin.setText("Poin : " + poin);

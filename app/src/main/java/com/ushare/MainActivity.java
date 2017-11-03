@@ -438,7 +438,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             String minute = ((seconds / 60 < 10) ? "0" : "") + seconds / 60;
                             seconds %= 60;
                             String second = (seconds < 10 ? "0" : "") + seconds;
-                            waktu.setText(day + "d " + hour + "h " + minute + "m " + second + "s");
+                            waktu.setText(day + "D " + hour + ":" + minute + ":" + second);
                         }
 
                         public void onFinish() {

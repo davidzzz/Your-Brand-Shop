@@ -64,7 +64,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="berlaku dalam waktu"
+                            android:text="berlaku s/d "
                             android:textColor="@color/cpb_white"
                             android:paddingLeft="10dp"
                             android:textSize="13sp"/>
