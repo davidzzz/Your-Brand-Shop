@@ -264,8 +264,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                if (akses != null && akses.equals("1")) {
+                if (akses == null || akses.equals("1")) {
                     KateData();
+                }
+                if (akses != null && akses.equals("1")) {
                     daftarFlashDeal();
                 } else if (akses != null && akses.equals("2")) {
                     statistik();

@@ -20,6 +20,7 @@ import com.ushare.adapter.SubAdapter;
 import com.ushare.app.myapp;
 import com.ushare.model.ItemSub;
 import com.ushare.util.Constant;
+import com.ushare.util.SessionManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class KategoriActivity extends AppCompatActivity {
@@ -54,15 +56,20 @@ public class KategoriActivity extends AppCompatActivity {
         gridView.setAdapter(adapter);
         URLKATE = Constant.URLAPI + "key=" + Constant.KEY + "&tag=" + Constant.TAG_SUB;
         daftarKategori();
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
-                ItemSub item = (ItemSub) parent.getItemAtPosition(position);
-                Intent intentlist = new Intent(KategoriActivity.this, ProdukActivity.class);
-                intentlist.putExtra("id", item.getId());
-                startActivity(intentlist);
-            }
-        });
+        SessionManager session = new SessionManager(getApplicationContext());
+        HashMap<String, String> user = session.getUserDetails();
+        String akses = user.get(SessionManager.KEY_AKSES);
+        if (akses.equals("1")) {
+            gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
+                    ItemSub item = (ItemSub) parent.getItemAtPosition(position);
+                    Intent intentlist = new Intent(KategoriActivity.this, ProdukActivity.class);
+                    intentlist.putExtra("id", item.getId());
+                    startActivity(intentlist);
+                }
+            });
+        }
     }
 
     private void daftarKategori() {
