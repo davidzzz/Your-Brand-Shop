@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -53,10 +55,10 @@ import java.util.List;
 
 public class ReservasiActivity extends AppCompatActivity {
     Toolbar mToolbar;
-    EditText teksNama, teksJumlah, teksHP;
+    EditText teksNama, teksJumlah, teksHP, teksKeterangan;
     TextView teksTanggal, teksWaktu;
     Button send;
-    String URL_SEND, userid, nama, jumlah, noHP, tanggal, waktu, akses;
+    String URL_SEND, userid, nama, jumlah, noHP, keterangan, tanggal, waktu, akses;
     SessionManager session;
     HashMap<String, String> user;
     ProgressDialog loading;
@@ -92,6 +94,7 @@ public class ReservasiActivity extends AppCompatActivity {
             teksNama = (EditText) findViewById(R.id.nama);
             teksJumlah = (EditText) findViewById(R.id.jumlah);
             teksHP = (EditText) findViewById(R.id.nomor_handphone);
+            teksKeterangan = (EditText) findViewById(R.id.keterangan);
             teksTanggal = (TextView) findViewById(R.id.teksTanggal);
             teksWaktu = (TextView) findViewById(R.id.teksWaktu);
             send = (Button) findViewById(R.id.send);
@@ -101,6 +104,7 @@ public class ReservasiActivity extends AppCompatActivity {
                     nama = teksNama.getText().toString();
                     jumlah = teksJumlah.getText().toString();
                     noHP = teksHP.getText().toString();
+                    keterangan = teksKeterangan.getText().toString();
                     if (nama.equals("")) {
                         Toast.makeText(ReservasiActivity.this, "Nama tidak boleh kosong", Toast.LENGTH_SHORT).show();
                     } else if (jumlah.equals("")) {
@@ -120,6 +124,15 @@ public class ReservasiActivity extends AppCompatActivity {
             listView.setVisibility(View.VISIBLE);
             adapter = new Adapter(list);
             ambilData();
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long l) {
+                    Reservasi reservasi = list.get(position);
+                    Intent intent = new Intent(ReservasiActivity.this, ReservasiDetailActivity.class);
+                    intent.putExtra("reservasi", reservasi);
+                    startActivity(intent);
+                }
+            });
         }
     }
 
@@ -191,7 +204,7 @@ public class ReservasiActivity extends AppCompatActivity {
                 httpURLConnection.connect();
 
                 String parameter = "idUser=" + userid + "&nama=" + nama + "&jumlah=" + jumlah + "&noHP=" + noHP
-                        + "&tanggal=" + tanggal + "&waktu=" + waktu + "&key=" + Constant.KEY;
+                        + "&keterangan=" + keterangan + "&tanggal=" + tanggal + "&waktu=" + waktu + "&key=" + Constant.KEY;
 
                 OutputStreamWriter writer = new OutputStreamWriter(httpURLConnection.getOutputStream());
                 writer.write(parameter);
@@ -255,6 +268,7 @@ public class ReservasiActivity extends AppCompatActivity {
                 reservasi.setNama(feedObj.getString("nama"));
                 reservasi.setJumlah(feedObj.getInt("jumlah"));
                 reservasi.setNoHP(feedObj.getString("nomor_handphone"));
+                reservasi.setKeterangan(feedObj.getString("keterangan"));
                 reservasi.setWaktu(feedObj.getString("waktu"));
                 list.add(reservasi);
             }
