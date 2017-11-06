@@ -216,7 +216,8 @@ public class MyVoucher extends Fragment implements SwipeRefreshLayout.OnRefreshL
             TextView poin = (TextView) convertView.findViewById(R.id.poin);
             TextView status = (TextView) convertView.findViewById(R.id.status);
             ImageView gambar = (ImageView) convertView.findViewById(R.id.gambar);
-            final Button cancel = (Button)convertView.findViewById(R.id.button);
+            final ImageView close = (ImageView) convertView.findViewById(R.id.close);
+            final Button redeem = (Button)convertView.findViewById(R.id.button);
             final Voucher item = list.get(position);
             nama.setText(item.getNama());
             poin.setText(item.getPoin() + " POINTS");
@@ -224,27 +225,52 @@ public class MyVoucher extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 status.setText("BELUM DIGUNAKAN");
                 status.setTextColor(Color.parseColor("#7bb241"));
                 status.setVisibility(View.GONE);
-                cancel.setVisibility(View.VISIBLE);
+                redeem.setVisibility(View.VISIBLE);
                 v.setEnabled(true);
             } else if (item.getTerpakai() == 1) {
                 status.setText("BATAL DIGUNAKAN");
                 status.setTextColor(Color.parseColor("#ff0000"));
                 status.setVisibility(View.VISIBLE);
-                cancel.setVisibility(View.GONE);
+                redeem.setVisibility(View.GONE);
                 v.setEnabled(false);
             } else if (item.getTerpakai() == 2) {
                 status.setText("TELAH DIGUNAKAN");
                 status.setTextColor(Color.parseColor("#7bb241"));
                 status.setVisibility(View.VISIBLE);
-                cancel.setVisibility(View.GONE);
+                redeem.setVisibility(View.GONE);
                 v.setEnabled(false);
             }
             Glide.with(getActivity())
                     .load(Constant.URLADMIN + item.getGambar())
                     .placeholder(R.drawable.loading)
                     .diskCacheStrategy(DiskCacheStrategy.ALL).into(gambar);
-            cancel.setText("CANCEL");
-            cancel.setOnClickListener(new View.OnClickListener() {
+            redeem.setText("REDEEM");
+            redeem.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    final Dialog dialog = new Dialog(getActivity());
+                    if (item.getTerpakai() == 0) {
+                        dialog.setContentView(R.layout.dialog_order_voucher);
+                        dialog.setTitle("Kode Voucher");
+                        Button button = (Button) dialog.findViewById(R.id.confirm);
+                        button.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                EditText kode = (EditText) dialog.findViewById(R.id.kode);
+                                String code = kode.getText().toString();
+                                cekKode(item.getId(), code);
+                                redeem.setVisibility(View.GONE);
+                                close.setVisibility(View.GONE);
+                                v.setEnabled(false);
+                                item.setTerpakai(2);
+                                dialog.dismiss();
+                            }
+                        });
+                        dialog.show();
+                    }
+                }
+            });
+            close.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
@@ -255,7 +281,8 @@ public class MyVoucher extends Fragment implements SwipeRefreshLayout.OnRefreshL
                         public void onClick(DialogInterface dialog, int whichButton) {
                             loading = ProgressDialog.show(getActivity(), "Membatalkan Voucher", "Please wait...", false, true);
                             cancelVoucher(item.getId());
-                            cancel.setVisibility(View.GONE);
+                            redeem.setVisibility(View.GONE);
+                            close.setVisibility(View.GONE);
                             v.setEnabled(false);
                             item.setTerpakai(1);
                             dialog.dismiss();

@@ -177,45 +177,49 @@ public class VoucherList extends Fragment implements SwipeRefreshLayout.OnRefres
                     .diskCacheStrategy(DiskCacheStrategy.ALL).into(gambar);
             Button buy = (Button)convertView.findViewById(R.id.button);
             buy.setText("BUY");
-            buy.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
-                    alert.setCancelable(false);
-                    alert.setTitle("KONFIRMASI PEMBELIAN");
-                    alert.setMessage("Anda yakin ingin membeli voucher ini?");
-                    alert.setPositiveButton("YA", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            Calendar now = Calendar.getInstance();
-                            now.set(Calendar.MILLISECOND, 0);
-                            Calendar c = Calendar.getInstance();
-                            c.set(Calendar.YEAR, Integer.parseInt(item.getTanggal().substring(0, 4)));
-                            c.set(Calendar.MONTH, Integer.parseInt(item.getTanggal().substring(5, 7)));
-                            c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(item.getTanggal().substring(8, 10)));
-                            c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(item.getTanggal().substring(11, 13)));
-                            c.set(Calendar.MINUTE, Integer.parseInt(item.getTanggal().substring(14, 16)));
-                            c.set(Calendar.SECOND, Integer.parseInt(item.getTanggal().substring(17)));
-                            c.set(Calendar.MILLISECOND, 0);
-                            if (poin < item.getPoin()) {
-                                Toast.makeText(getActivity(), "Poin anda tidak mencukupi untuk membeli voucher ini.", Toast.LENGTH_SHORT).show();
-                            } else if (now.compareTo(c) > 0) {
-                                Toast.makeText(getActivity(), "Voucher ini telah kedaluwarsa.", Toast.LENGTH_SHORT).show();
-                            } else {
-                                loading = ProgressDialog.show(getActivity(), "Membeli Voucher", "Please wait...", false, true);
-                                new BuyVoucher(item.getId(), item.getPoin()).execute();
+            if (akses.equals("1")) {
+                buy.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                        alert.setCancelable(false);
+                        alert.setTitle("KONFIRMASI PEMBELIAN");
+                        alert.setMessage("Anda yakin ingin membeli voucher ini?");
+                        alert.setPositiveButton("YA", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Calendar now = Calendar.getInstance();
+                                now.set(Calendar.MILLISECOND, 0);
+                                Calendar c = Calendar.getInstance();
+                                c.set(Calendar.YEAR, Integer.parseInt(item.getTanggal().substring(0, 4)));
+                                c.set(Calendar.MONTH, Integer.parseInt(item.getTanggal().substring(5, 7)));
+                                c.set(Calendar.DAY_OF_MONTH, Integer.parseInt(item.getTanggal().substring(8, 10)));
+                                c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(item.getTanggal().substring(11, 13)));
+                                c.set(Calendar.MINUTE, Integer.parseInt(item.getTanggal().substring(14, 16)));
+                                c.set(Calendar.SECOND, Integer.parseInt(item.getTanggal().substring(17)));
+                                c.set(Calendar.MILLISECOND, 0);
+                                if (poin < item.getPoin()) {
+                                    Toast.makeText(getActivity(), "Poin anda tidak mencukupi untuk membeli voucher ini.", Toast.LENGTH_SHORT).show();
+                                } else if (now.compareTo(c) > 0) {
+                                    Toast.makeText(getActivity(), "Voucher ini telah kedaluwarsa.", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    loading = ProgressDialog.show(getActivity(), "Membeli Voucher", "Please wait...", false, true);
+                                    new BuyVoucher(item.getId(), item.getPoin()).execute();
+                                }
+                                dialog.dismiss();
                             }
-                            dialog.dismiss();
-                        }
-                    });
+                        });
 
-                    alert.setNegativeButton("TIDAK", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton) {
-                            dialog.cancel();
-                        }
-                    });
-                    alert.show();
-                }
-            });
+                        alert.setNegativeButton("TIDAK", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.cancel();
+                            }
+                        });
+                        alert.show();
+                    }
+                });
+            } else {
+                buy.setVisibility(View.GONE);
+            }
             return convertView;
         }
     }
