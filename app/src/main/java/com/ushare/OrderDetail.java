@@ -73,7 +73,7 @@ public class OrderDetail extends AppCompatActivity {
         item_order = getIntent().getParcelableExtra("item_order");
         ID = item_order.getId();
         String akses = user.get(SessionManager.KEY_AKSES);
-        if (akses.equals("1") || item_order.getStatus().equals("CANCEL") || item_order.getStatus().equals("DONE")) {
+        if (akses.equals("1") || !item_order.getStatus().equals("PENDING")) {
             lytbtn.setVisibility(View.GONE);
         }
         if (item_order.isOnTheSpot()) {
@@ -93,6 +93,42 @@ public class OrderDetail extends AppCompatActivity {
                         startActivity(intent);
                     }
                 });
+            } else if (item_order.getStatus().equals("PROCESSED")) {
+                btnSend.setText("ACCEPT DELIVERY");
+                final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle(R.string.app_name);
+                alert.setIcon(R.drawable.ic_launcher);
+                alert.setMessage("Accept Delivery");
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Accept(ID);
+                    }
+                });
+                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+
+                alert.show();
+            } else if (item_order.getStatus().equals("PENDING")) {
+                btnSend.setText("CANCEL");
+                final AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle(R.string.app_name);
+                alert.setIcon(R.drawable.ic_launcher);
+                alert.setMessage("Cancel This Order ?");
+                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Cancel(ID);
+                    }
+                });
+                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        dialog.cancel();
+                    }
+                });
+
+                alert.show();
             } else {
                 btnSend.setVisibility(View.GONE);
             }
@@ -113,7 +149,6 @@ public class OrderDetail extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AcceptOrder();
-
             }
         });
         btnCancel.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +157,7 @@ public class OrderDetail extends AppCompatActivity {
                 final AlertDialog.Builder alert = new AlertDialog.Builder(OrderDetail.this);
                 alert.setTitle(R.string.app_name);
                 alert.setIcon(R.drawable.ic_launcher);
-                alert.setMessage("Cancel This Order ??");
+                alert.setMessage("Cancel This Order ?");
                 alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final ProgressDialog loading = ProgressDialog.show(OrderDetail.this,"Send Data...","Please wait...",false,true);
@@ -202,6 +237,81 @@ public class OrderDetail extends AppCompatActivity {
                 params.put("order_id", ID);
                 params.put("key", Constant.KEY);
                 params.put("gcm", item_order.getGcm_id());
+                //returning parameters
+                return params;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myapp.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    public void Accept(final String order_id) {
+        String URL = Constant.URLADMIN + "api/accept_user.php";
+        final ProgressDialog loading = ProgressDialog.show(this,"Send Data...","Please wait...",false,true);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        //Disimissing the progress dialog
+                        loading.dismiss();
+                        Toast.makeText(OrderDetail.this, s, Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        loading.dismiss();
+                        Toast.makeText(OrderDetail.this, "Server error, Please Try again..", Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                //Converting Bitmap to String
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+                //Adding parameters
+                params.put("order_id", order_id);
+                params.put("key", Constant.KEY);
+                //returning parameters
+                return params;
+            }
+        };
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myapp.getInstance().addToRequestQueue(stringRequest);
+    }
+
+    public void Cancel(final String order_id) {
+        String URL = Constant.URLADMIN + "api/cancel.php";
+        final ProgressDialog loading = ProgressDialog.show(this,"Send Data...","Please wait...",false,true);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URL,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        //Disimissing the progress dialog
+                        loading.dismiss();
+                        Toast.makeText(OrderDetail.this, s, Toast.LENGTH_LONG).show();
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        //Dismissing the progress dialog
+                        loading.dismiss();
+                        Toast.makeText(OrderDetail.this, "Server error, Please Try again..", Toast.LENGTH_LONG).show();
+                    }
+                }){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                //Converting Bitmap to String
+                //Creating parameters
+                Map<String,String> params = new Hashtable<String, String>();
+                //Adding parameters
+                params.put("order_id", order_id);
+                params.put("key", Constant.KEY);
+                params.put("user_id", userid);
                 //returning parameters
                 return params;
             }
