@@ -1,0 +1,25 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.ushare.TabActivity">
+
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/filter"
+        android:orderInCategory="100"
+        app:showAsAction="always"
+        android:title="FILTER">
+        <menu>
+            <item
+                android:id="@+id/nama"
+                android:title="Sort by Nama" />
+            <item
+                android:id="@+id/tanggal"
+                android:title="Sort by Tanggal" />
+            <item
+                android:id="@+id/status"
+                android:title="Sort by Status" />
+        </menu>
+    </item>
+
+</menu>
