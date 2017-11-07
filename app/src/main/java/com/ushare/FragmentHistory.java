@@ -33,10 +33,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class FragmentHistory extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-
-    public FragmentHistory(){
-
-    }
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView list;
     private List<ItemOrder> itemList;
@@ -44,6 +40,16 @@ public class FragmentHistory extends Fragment implements SwipeRefreshLayout.OnRe
     SessionManager session;
     HashMap<String, String> user;
     String URL_ORDER,userid;
+    boolean isFlashDeal;
+
+    public static FragmentHistory newInstance(boolean isFlashDeal){
+        Bundle args = new Bundle();
+        args.putBoolean("isFlashDeal", isFlashDeal);
+
+        FragmentHistory fragment = new FragmentHistory();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,8 +60,9 @@ public class FragmentHistory extends Fragment implements SwipeRefreshLayout.OnRe
         itemList = new ArrayList<ItemOrder>();
         user = session.getUserDetails();
         userid = user.get(session.KEY_PASSENGER_ID);
+        isFlashDeal = getArguments().getBoolean("isFlashDeal");
         adapter = new HistoryAdapter(getActivity(), itemList);
-        URL_ORDER = Constant.URLADMIN+"api/history.php?key="+ Constant.KEY +"&tag=history&user_id="+userid;
+        URL_ORDER = Constant.URLADMIN+"api/history.php?key="+ Constant.KEY +"&tag=history&user_id="+userid + "&isFlashDeal=" + isFlashDeal;
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.post(new Runnable() {
             @Override

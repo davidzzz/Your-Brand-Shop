@@ -593,14 +593,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             case 3:
                 if (isLogin()) {
-                    if (akses != null && akses.equals("2")) {
-                        Intent intent = new Intent(this, OrderList.class);
-                        startActivity(intent);
-                    } else {
-                        Intent intentHistory = new Intent(this, TabActivity.class);
-                        intentHistory.putExtra("tipe", "history");
-                        startActivity(intentHistory);
-                    }
+                    Intent intentHistory = new Intent(this, TabActivity.class);
+                    intentHistory.putExtra("tipe", "history");
+                    intentHistory.putExtra("isFlashDeal", true);
+                    startActivity(intentHistory);
                 } else {
                     Intent i = new Intent(this, LoginActivity.class);
                     startActivity(i);
@@ -631,14 +627,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             case 6:
                 if (isLogin()) {
-                    if (akses != null && akses.equals("2")) {
-                        Intent intent = new Intent(this, OrderList.class);
-                        startActivity(intent);
-                    } else {
-                        Intent intentHistory = new Intent(this, TabActivity.class);
-                        intentHistory.putExtra("tipe", "history");
-                        startActivity(intentHistory);
-                    }
+                    Intent intentHistory = new Intent(this, TabActivity.class);
+                    intentHistory.putExtra("tipe", "history");
+                    startActivity(intentHistory);
                 } else {
                     Intent i = new Intent(this, LoginActivity.class);
                     startActivity(i);

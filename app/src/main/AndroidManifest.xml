@@ -46,10 +46,6 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".OrderList"
-            android:label="@string/app_name"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".OrderDetail"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />

@@ -2,12 +2,15 @@ package com.ushare;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
@@ -33,32 +36,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class OrderList extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class OrderList extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
     private Toolbar toolbar;
     private ListView list;
     private List<ItemOrder> itemList;
     private ItemOrder object;
     private OrderSellerAdapter adapter;
-    String id_user, URL;
+    String id_user, tipe, URL;
+    boolean isFlashDeal;
     SessionManager session;
     HashMap<String, String> user;
     private SwipeRefreshLayout swipeRefreshLayout;
 
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.toko_list);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("Order List");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        session = new SessionManager(getApplicationContext());
+    public static OrderList newInstance(String tipe, boolean isFlashDeal) {
+        Bundle args = new Bundle();
+        args.putString("tipe", tipe);
+        args.putBoolean("isFlashDeal", isFlashDeal);
+
+        OrderList fragment = new OrderList();
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_order, container, false);
+        swipeRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.swipe_refresh_layout);
+        session = new SessionManager(getActivity());
         user = session.getUserDetails();
         id_user = user.get(SessionManager.KEY_PASSENGER_ID);
-        list = (ListView) findViewById(R.id.listMenu);
+        list = (ListView) rootView.findViewById(R.id.ListView1);
         itemList = new ArrayList<ItemOrder>();
-        adapter = new OrderSellerAdapter(this, itemList);
-        URL = Constant.URLADMIN + "api/order_list.php?key=" + Constant.KEY + "&tag=list";
+        adapter = new OrderSellerAdapter(getActivity(), itemList);
+        tipe = getArguments().getString("tipe");
+        isFlashDeal = getArguments().getBoolean("isFlashDeal");
+        URL = Constant.URLADMIN + "api/order_list.php?key=" + Constant.KEY + "&tag=list&tipe=" + tipe + "&isFlashDeal=" + isFlashDeal;
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.post(new Runnable() {
             @Override
@@ -73,11 +85,13 @@ public class OrderList extends AppCompatActivity implements SwipeRefreshLayout.O
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 object = itemList.get(position);
-                Intent detail = new Intent(OrderList.this, OrderDetail.class);
+                Intent detail = new Intent(getActivity(), OrderDetail.class);
                 detail.putExtra("item_order", object);
                 startActivity(detail);
             }
         });
+
+        return rootView;
     }
 
     private void ambilData() {
@@ -153,26 +167,7 @@ public class OrderList extends AppCompatActivity implements SwipeRefreshLayout.O
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            // app icon in action bar clicked; go home
-            this.finish();
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
-    }
-
-    @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         if (list != null) {
             list.setAdapter(null);

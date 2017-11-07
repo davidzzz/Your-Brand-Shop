@@ -42,10 +42,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-
-    public FragOrderProses(){
-
-    }
     private SwipeRefreshLayout swipeRefreshLayout;
     private ListView list;
     private List<ItemOrder> itemList;
@@ -54,6 +50,16 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
     SessionManager session;
     HashMap<String, String> user;
     String URL_ORDER,userid,URL_CANCEL,URL_ACCEPT;
+    boolean isFlashDeal;
+
+    public static FragOrderProses newInstance(boolean isFlashDeal){
+        Bundle args = new Bundle();
+        args.putBoolean("isFlashDeal", isFlashDeal);
+
+        FragOrderProses fragment = new FragOrderProses();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,10 +70,11 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
         itemList = new ArrayList<ItemOrder>();
         user = session.getUserDetails();
         userid = user.get(session.KEY_PASSENGER_ID);
+        isFlashDeal = getArguments().getBoolean("isFlashDeal");
         adapter = new OrderAdapter(getActivity(), itemList, this);
         URL_CANCEL = Constant.URLADMIN+"api/cancel.php";
         URL_ACCEPT = Constant.URLADMIN+"api/accept_user.php";
-        URL_ORDER = Constant.URLADMIN+"api/history.php?key=" + Constant.KEY + "&tag=order&user_id="+userid;
+        URL_ORDER = Constant.URLADMIN+"api/history.php?key=" + Constant.KEY + "&tag=order&user_id="+userid + "&isFlashDeal=" + isFlashDeal;
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.post(new Runnable() {
             @Override

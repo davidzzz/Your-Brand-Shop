@@ -33,21 +33,27 @@ public class TabActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tab);
+        tipe = getIntent().getStringExtra("tipe");
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setTitle("ORDER");
+        getSupportActionBar().setTitle(tipe.equals("history") ? "ORDER" : "VOUCHER");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         LinearLayout layoutPoin = (LinearLayout) findViewById(R.id.layout_poin);
         SessionManager session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
         String akses = user.get(SessionManager.KEY_AKSES);
-        tipe = getIntent().getStringExtra("tipe");
 
         adapter = new TabAdapter(getSupportFragmentManager());
         if (tipe.equals("history")) {
+            boolean isFlashDeal = getIntent().getBooleanExtra("isFlashDeal", false);
             layoutPoin.setVisibility(View.GONE);
-            adapter.setFragment(new FragOrderProses(), "ORDER");
-            adapter.setFragment(new FragmentHistory(), "HISTORY");
+            if (akses.equals("2")) {
+                adapter.setFragment(OrderList.newInstance("order", isFlashDeal), "ORDER");
+                adapter.setFragment(OrderList.newInstance("history", isFlashDeal), "HISTORY");
+            } else {
+                adapter.setFragment(FragOrderProses.newInstance(isFlashDeal), "ORDER");
+                adapter.setFragment(FragmentHistory.newInstance(isFlashDeal), "HISTORY");
+            }
         } else if (tipe.equals("voucher")) {
             adapter.setFragment(new VoucherList(), "VOUCHER");
             if (akses.equals("2")) {
