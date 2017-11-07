@@ -76,11 +76,59 @@ public class OrderDetail extends AppCompatActivity {
         if (akses.equals("1") || !item_order.getStatus().equals("PENDING")) {
             lytbtn.setVisibility(View.GONE);
         }
-        if (item_order.isOnTheSpot()) {
-            lytbiodata.setVisibility(View.GONE);
-            LinearLayout layout_ongkir = (LinearLayout) findViewById(R.id.layout_ongkir);
-            layout_ongkir.setVisibility(View.GONE);
-            if (akses.equals("2")) {
+        if (akses.equals("1")) {
+            if (item_order.getStatus().equals("PROCESSED")) {
+                btnSend.setText("ACCEPT DELIVERY");
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final AlertDialog.Builder alert = new AlertDialog.Builder(OrderDetail.this);
+                        alert.setTitle(R.string.app_name);
+                        alert.setIcon(R.drawable.ic_launcher);
+                        alert.setMessage("Accept Delivery");
+                        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Accept(ID);
+                            }
+                        });
+                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        alert.show();
+                    }
+                });
+            } else if (item_order.getStatus().equals("PENDING")) {
+                btnSend.setText("CANCEL");
+                btnSend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final AlertDialog.Builder alert = new AlertDialog.Builder(OrderDetail.this);
+                        alert.setTitle(R.string.app_name);
+                        alert.setIcon(R.drawable.ic_launcher);
+                        alert.setMessage("Cancel This Order ?");
+                        alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                Cancel(ID);
+                            }
+                        });
+                        alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        alert.show();
+                    }
+                });
+            } else {
+                btnSend.setVisibility(View.GONE);
+            }
+        } else {
+            if (item_order.isOnTheSpot()) {
+                btnSend.setText("GO TO SENT POINT");
                 btnSend.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -88,52 +136,19 @@ public class OrderDetail extends AppCompatActivity {
                         String nama_user = item_order.getNama().toUpperCase();
                         Intent intent = new Intent(OrderDetail.this, SentPoinOrderActivity.class);
                         intent.putParcelableArrayListExtra("item_detail", item_order.getItemDetail());
-                        intent.putExtra("nomor_user", String.valueOf(nama_user.charAt(0)) +  String.valueOf(nama_user.charAt(2)) + formatter);
+                        intent.putExtra("nomor_user", String.valueOf(nama_user.charAt(0)) + String.valueOf(nama_user.charAt(2)) + formatter);
                         intent.putExtra("id_order", item_order.getId());
                         startActivity(intent);
                     }
                 });
-            } else if (item_order.getStatus().equals("PROCESSED")) {
-                btnSend.setText("ACCEPT DELIVERY");
-                final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setTitle(R.string.app_name);
-                alert.setIcon(R.drawable.ic_launcher);
-                alert.setMessage("Accept Delivery");
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        Accept(ID);
-                    }
-                });
-                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-
-                alert.show();
-            } else if (item_order.getStatus().equals("PENDING")) {
-                btnSend.setText("CANCEL");
-                final AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setTitle(R.string.app_name);
-                alert.setIcon(R.drawable.ic_launcher);
-                alert.setMessage("Cancel This Order ?");
-                alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        Cancel(ID);
-                    }
-                });
-                alert.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-
-                alert.show();
             } else {
                 btnSend.setVisibility(View.GONE);
             }
-        } else {
-            btnSend.setVisibility(View.GONE);
+        }
+        if (item_order.isOnTheSpot()) {
+            lytbiodata.setVisibility(View.GONE);
+            LinearLayout layout_ongkir = (LinearLayout) findViewById(R.id.layout_ongkir);
+            layout_ongkir.setVisibility(View.GONE);
         }
         txtbiodata.setText("DETAIL BUYER \n\nAddress: " + item_order.getAddress() + "\nNo. Handphone : "+ item_order.getTelp());
         txtStatus.setText(item_order.getStatus().equals("") ? "PENDING" : item_order.getStatus());

@@ -35,18 +35,22 @@
                 android:id="@+id/nama"
                 android:textSize="16sp"
                 android:textStyle="bold" />
-            <TextView
-                android:layout_width="20dp"
-                android:layout_height="19dp"
-                android:background="@drawable/poin"
-                />
-            <TextView
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/poin"
-                android:layout_marginTop="8dp"
-                android:textSize="13sp"
-                android:textStyle="bold" />
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="19dp"
+                    android:background="@drawable/poin" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/poin"
+                    android:layout_marginLeft="3dp"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
