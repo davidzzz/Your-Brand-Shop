@@ -105,11 +105,11 @@ public class SpinActivity extends AppCompatActivity {
                     JSONObject feedObj = response.getJSONObject("data");
                     cost = feedObj.getInt("value");
                     TextView teksCost = (TextView) findViewById(R.id.cost);
-                    teksCost.setText("COST : " + cost + "");
+                    teksCost.setText("" + cost + "");
                 } catch (JSONException e) {
                     cost = 0;
                     TextView cost = (TextView) findViewById(R.id.cost);
-                    cost.setText("COST : - ");
+                    cost.setText("- ");
                 }
             }
         }, new Response.ErrorListener() {
