@@ -16,11 +16,15 @@ import android.widget.TextView;
 
 
 import com.ushare.adapter.TabAdapter;
+import com.ushare.model.ItemOrder;
 import com.ushare.util.SessionManager;
 
 import org.w3c.dom.Text;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 public class TabActivity extends AppCompatActivity {
     ViewPager pager;
@@ -28,7 +32,11 @@ public class TabActivity extends AppCompatActivity {
     TabLayout tabs;
     Toolbar mToolbar;
     HashMap<String, String> user;
-    String tipe;
+    String tipe, akses;
+    OrderList orderList, historyList;
+    FragOrderProses fragOrder;
+    FragmentHistory fragHistory;
+    List<ItemOrder> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,18 +50,22 @@ public class TabActivity extends AppCompatActivity {
         LinearLayout layoutPoin = (LinearLayout) findViewById(R.id.layout_poin);
         SessionManager session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
-        String akses = user.get(SessionManager.KEY_AKSES);
+        akses = user.get(SessionManager.KEY_AKSES);
 
         adapter = new TabAdapter(getSupportFragmentManager());
         if (tipe.equals("history")) {
             boolean isFlashDeal = getIntent().getBooleanExtra("isFlashDeal", false);
             layoutPoin.setVisibility(View.GONE);
             if (akses.equals("2")) {
-                adapter.setFragment(OrderList.newInstance("order", isFlashDeal), "ORDER");
-                adapter.setFragment(OrderList.newInstance("history", isFlashDeal), "HISTORY");
+                orderList = OrderList.newInstance("order", isFlashDeal);
+                historyList = OrderList.newInstance("history", isFlashDeal);
+                adapter.setFragment(orderList, "ORDER");
+                adapter.setFragment(historyList, "HISTORY");
             } else {
-                adapter.setFragment(FragOrderProses.newInstance(isFlashDeal), "ORDER");
-                adapter.setFragment(FragmentHistory.newInstance(isFlashDeal), "HISTORY");
+                fragOrder = FragOrderProses.newInstance(isFlashDeal);
+                fragHistory = FragmentHistory.newInstance(isFlashDeal);
+                adapter.setFragment(fragOrder, "ORDER");
+                adapter.setFragment(fragHistory, "HISTORY");
             }
         } else if (tipe.equals("voucher")) {
             adapter.setFragment(new VoucherList(), "VOUCHER");
@@ -81,10 +93,33 @@ public class TabActivity extends AppCompatActivity {
         tabs.setupWithViewPager(pager);
     }
 
+    public class CompareNama implements Comparator<ItemOrder> {
+        @Override
+        public int compare(ItemOrder i1, ItemOrder i2) {
+            return i1.getNama().compareToIgnoreCase(i2.getNama());
+        }
+    }
+
+    public class CompareTanggal implements Comparator<ItemOrder> {
+        @Override
+        public int compare(ItemOrder i1, ItemOrder i2) {
+            return i1.getTanggal().compareToIgnoreCase(i2.getTanggal());
+        }
+    }
+
+    public class CompareStatus implements Comparator<ItemOrder> {
+        @Override
+        public int compare(ItemOrder i1, ItemOrder i2) {
+            return i1.getStatus().compareToIgnoreCase(i2.getStatus());
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_order, menu);
+        if (tipe.equals("history")) {
+            getMenuInflater().inflate(R.menu.menu_order, menu);
+        }
         return true;
     }
 
@@ -96,6 +131,30 @@ public class TabActivity extends AppCompatActivity {
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();
+        } else if (id == R.id.nama || id == R.id.tanggal || id == R.id.status) {
+            Comparator<ItemOrder> c;
+            if (id == R.id.nama) {
+                c = new CompareNama();
+            } else if (id == R.id.tanggal) {
+                c = new CompareTanggal();
+            } else {
+                c = new CompareStatus();
+            }
+            if (akses.equals("2")) {
+                list = orderList.getListItem();
+                Collections.sort(list, c);
+                orderList.getAdapter().notifyDataSetChanged();
+                list = historyList.getListItem();
+                Collections.sort(list, c);
+                historyList.getAdapter().notifyDataSetChanged();
+            } else {
+                list = fragOrder.getListItem();
+                Collections.sort(list, c);
+                fragOrder.getAdapter().notifyDataSetChanged();
+                list = fragHistory.getListItem();
+                Collections.sort(list, c);
+                fragHistory.getAdapter().notifyDataSetChanged();
+            }
         }
         return super.onOptionsItemSelected(item);
     }

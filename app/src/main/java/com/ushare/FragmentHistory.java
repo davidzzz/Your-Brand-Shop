@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -49,6 +50,14 @@ public class FragmentHistory extends Fragment implements SwipeRefreshLayout.OnRe
         FragmentHistory fragment = new FragmentHistory();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    public List<ItemOrder> getListItem() {
+        return itemList;
+    }
+
+    public BaseAdapter getAdapter() {
+        return adapter;
     }
 
     @Override

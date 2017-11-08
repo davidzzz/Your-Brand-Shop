@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -95,6 +96,14 @@ public class FragOrderProses extends Fragment implements SwipeRefreshLayout.OnRe
         });
 
         return rootView;
+    }
+
+    public List<ItemOrder> getListItem() {
+        return itemList;
+    }
+
+    public BaseAdapter getAdapter() {
+        return adapter;
     }
 
     public void Accept(final String order_id) {

@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -92,6 +93,14 @@ public class OrderList extends Fragment implements SwipeRefreshLayout.OnRefreshL
         });
 
         return rootView;
+    }
+
+    public List<ItemOrder> getListItem() {
+        return itemList;
+    }
+
+    public BaseAdapter getAdapter() {
+        return adapter;
     }
 
     private void ambilData() {
