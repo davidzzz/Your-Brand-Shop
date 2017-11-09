@@ -72,7 +72,7 @@ public class SpinActivity extends AppCompatActivity {
         poin = Integer.parseInt(user.get(SessionManager.KEY_POIN));
         userid = user.get(session.KEY_PASSENGER_ID);
         teksPoin = (TextView) findViewById(R.id.poin);
-        teksPoin.setText("MY POINTS : " + poin);
+        teksPoin.setText("" + poin);
         URL = Constant.URLAPI + "key=" + Constant.KEY + "&tag=jackpot";
         URL_CONF = Constant.URLAPI + "key=" + Constant.KEY + "&tag=konfigurasi&id=1";
         URL_POIN = Constant.URLAPI + "key=" + Constant.KEY + "&tag=updatePoin&id=" + userid;
@@ -88,7 +88,7 @@ public class SpinActivity extends AppCompatActivity {
                 if (cost <= poin) {
                     poin -= cost;
                     session.updateValue(SessionManager.KEY_POIN, String.valueOf(poin));
-                    teksPoin.setText("MY POINTS : " + poin);
+                    teksPoin.setText("" + poin);
                     rotate();
                 } else {
                     Toast.makeText(SpinActivity.this, "Poin Anda tidak mencukupi untuk memainkan jackpot ini", Toast.LENGTH_SHORT).show();
@@ -105,11 +105,11 @@ public class SpinActivity extends AppCompatActivity {
                     JSONObject feedObj = response.getJSONObject("data");
                     cost = feedObj.getInt("value");
                     TextView teksCost = (TextView) findViewById(R.id.cost);
-                    teksCost.setText("COST : " + cost + " POINTS");
+                    teksCost.setText("" + cost + "");
                 } catch (JSONException e) {
                     cost = 0;
                     TextView cost = (TextView) findViewById(R.id.cost);
-                    cost.setText("COST : - POINTS");
+                    cost.setText("- ");
                 }
             }
         }, new Response.ErrorListener() {
@@ -200,7 +200,7 @@ public class SpinActivity extends AppCompatActivity {
                     if (poinArray[pos] > 0) {
                         poin += poinArray[pos];
                         session.updateValue(SessionManager.KEY_POIN, String.valueOf(poin));
-                        teksPoin.setText("MY POINTS : " + poin);
+                        teksPoin.setText("" + poin);
                         alert.setMessage("Selamat, Anda mendapatkan poin sebesar " + poinArray[pos]);
                     } else {
                         alert.setMessage("Maaf, Anda kurang beruntung");

@@ -220,7 +220,7 @@ public class MyVoucher extends Fragment implements SwipeRefreshLayout.OnRefreshL
             final Button redeem = (Button)convertView.findViewById(R.id.button);
             final Voucher item = list.get(position);
             nama.setText(item.getNama());
-            poin.setText(item.getPoin() + " POINTS");
+            poin.setText(item.getPoin() + "");
             if (item.getTerpakai() == 0) {
                 status.setText("BELUM DIGUNAKAN");
                 status.setTextColor(Color.parseColor("#7bb241"));

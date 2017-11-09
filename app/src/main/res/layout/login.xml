@@ -31,21 +31,7 @@
             android:layout_marginBottom="20dp"
             android:src="@drawable/ic_header_logo" />
 
-        <com.ushare.view.MaterialRippleLayout
-            style="@style/RippleStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/selector_background_empty" >
 
-            <Button
-                android:id="@+id/btnFace"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/button_bg_fb"
-                android:text="Login with Facebook"
-                android:textColor="#fff"
-                android:textStyle="bold" />
-        </com.ushare.view.MaterialRippleLayout>
 
         <View
             android:layout_width="match_parent"
