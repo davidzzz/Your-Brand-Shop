@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="#e7e7e7">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:id="@+id/search_text"
+            android:inputType="text"
+            android:padding="5dp"
+            android:hint="Search nama atau status"
+            android:background="@drawable/border_rectangle"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tanggal"
+            android:text="TANGGAL"/>
+    </LinearLayout>
     <android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:custom="http://schemas.android.com/apk/res-auto"
         android:id="@+id/swipe_refresh_layout"
@@ -11,11 +31,10 @@
         android:layout_height="wrap_content">
 
         <ListView
-
             android:id="@+id/ListView1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            android:visibility="visible"></ListView>
+            android:visibility="visible"/>
     </android.support.v4.widget.SwipeRefreshLayout>
-</RelativeLayout>
+</LinearLayout>
