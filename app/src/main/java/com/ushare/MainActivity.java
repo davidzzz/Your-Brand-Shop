@@ -46,6 +46,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SubAdapter adapter;
     private SliderLayout mDemoSlider;
     String URL, URLKATE, URLFD, URLSTAT, nama_promo, gambar_promo;
-    TextView alert;
+    TextView alert, countCart;
     Adapter flashDealAdapter;
     ArrayList<FlashDeal> listFlashDeal;
     RecyclerView recyclerView;
@@ -794,6 +795,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.shop);
+        if (akses != null && akses.equals("1")) {
+            MenuItemCompat.setActionView(item, R.layout.badge);
+            RelativeLayout notifCount = (RelativeLayout) MenuItemCompat.getActionView(item);
+            RelativeLayout layout = (RelativeLayout) notifCount.findViewById(R.id.badge_layout);
+            countCart = (TextView) notifCount.findViewById(R.id.badge);
+            countCart.setText(Constant.jumlah + "");
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.this, CartActivity.class);
+                    i.putExtra("poin", Constant.poin);
+                    i.putParcelableArrayListExtra("cartList", Constant.cartList);
+                    startActivity(i);
+                }
+            });
+        } else {
+            item.setVisible(false);
+        }
         return true;
     }
 
@@ -818,6 +838,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onResume() {
         mDemoSlider.startAutoCycle();
+        if (countCart != null) {
+            countCart.setText(Constant.jumlah + "");
+        }
         super.onResume();
     }
 

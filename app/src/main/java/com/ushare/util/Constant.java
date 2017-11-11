@@ -1,5 +1,9 @@
 package com.ushare.util;
 
+import com.ushare.model.Cart;
+
+import java.util.ArrayList;
+
 public class Constant {
     // INI BASE URL API DI ADMIN PANEL JANGN LUPA GANTI KEY UNTUK KEAMANAN
     // BERSAMA. ^,^
@@ -12,6 +16,10 @@ public class Constant {
 
     public static String TAG_SUB = "sub";
     public static String TAG_PROMO = "promo";
+
+    public static ArrayList<Cart> cartList = new ArrayList<>();
+    public static int poin = 0;
+    public static int jumlah = 0;
 
     //BAGIAN LOGIN
     public static final String TAG_LOGIN = "login";
@@ -37,7 +45,6 @@ public class Constant {
     public static final String USER_REG_ARRAY = "Shopingo";
     public static final String USER_REG_MSG = "msg";
     public static final String USER_REG_SUCESS = "Success";
-    public static final String TAG_REG = "register";
     public static int GET_SUCCESS_REGIS;
 
     //bagian gcm
@@ -46,5 +53,4 @@ public class Constant {
     public static final String PUSH_NOTIFICATION = "pushNotification";
     public static String strMessage;
     public static int status;
-    public static String gcm;
 }
