@@ -34,7 +34,7 @@ import java.util.ArrayList;
 
 public class ProdukDetailActivity extends AppCompatActivity {
     private Toolbar toolbar;
-    String id, URL, nama;
+    String id, URL, nama, gambar;
     private SliderLayout mDemoSlider;
     private TextView teksNama, teksHarga, teksPoin, teksQty, deskripsi, total;
     private Button order;
@@ -80,6 +80,7 @@ public class ProdukDetailActivity extends AppCompatActivity {
                     cart.setQuantity(qty);
                     cart.setHarga(harga);
                     cart.setPoin(poin);
+                    cart.setGambar(gambar);
                     cart.setTotal(SubTotal);
                 }
                 teksQty.setText(qty + "");
@@ -108,6 +109,7 @@ public class ProdukDetailActivity extends AppCompatActivity {
                         cart.setQuantity(qty);
                         cart.setHarga(harga);
                         cart.setPoin(poin);
+                        cart.setGambar(gambar);
                         cart.setTotal(SubTotal);
                     }
                     teksQty.setText(qty + "");
@@ -152,7 +154,7 @@ public class ProdukDetailActivity extends AppCompatActivity {
             for (int i = 0; i < data.length(); i++) {
                 JSONObject feedObj = (JSONObject) data.get(i);
                 String judul = feedObj.getString("judul");
-                String gambar = feedObj.getString("gambar");
+                gambar = feedObj.getString("gambar");
                 nama = feedObj.getString("nama_produk");
                 harga = Integer.parseInt(feedObj.getString("harga"));
                 poin = Integer.parseInt(feedObj.getString("poin"));
@@ -168,6 +170,7 @@ public class ProdukDetailActivity extends AppCompatActivity {
                     cart.setQuantity(qty);
                     cart.setHarga(harga);
                     cart.setPoin(poin);
+                    cart.setGambar(gambar);
                     cart.setTotal(qty * harga);
                 }
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {

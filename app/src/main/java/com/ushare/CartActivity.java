@@ -12,14 +12,18 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -27,7 +31,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +50,12 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -56,6 +65,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.ushare.app.myapp;
 import com.ushare.model.Cart;
 import com.ushare.util.Constant;
+import com.ushare.util.EasyPermission;
+import com.ushare.util.GPSTracker;
 import com.ushare.util.RouteDraw;
 import com.ushare.util.SessionManager;
 import com.ushare.util.Utils;
@@ -65,15 +76,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CartActivity extends AppCompatActivity implements View.OnClickListener, OnMapReadyCallback, RouteDraw.onDrawRoute {
-    private static final String TAG = CartActivity.class.getSimpleName();
+public class CartActivity extends AppCompatActivity
+        implements View.OnClickListener, OnMapReadyCallback, RouteDraw.onDrawRoute, EasyPermission.OnPermissionResult, LocationListener {
+    private static final String TAG = ProdukActivity.class.getSimpleName();
     private Toolbar toolbar;
     private ExpandableHeightListView list;
     private ArrayList<Cart> cartList;
-
-    private GoogleMap mMap;
-
     private AdapterCart adapter = null;
+    private GoogleMap mMap;
+    private static final int REQUEST_CHECK_SETTINGS = 0x1;
+    private EasyPermission easyPermission;
+    GPSTracker gps;
     SessionManager session;
     HashMap<String, String> user;
     String alamat, notes, totalorder, userid,telp;
@@ -88,7 +101,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     int meter = 0;
     int perkm = 0;
     int poin = 0;
-    int totalBarang = 0;
+    int totalBarang = 0, totalItem = 0;
     boolean onTheSpot = false;
     double latToko = 0.0, lngToko = 0.0;
     String idFlashDeal = "";
@@ -96,6 +109,8 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     DecimalFormat formatduit = new DecimalFormat();
     ProgressDialog loading;
     LinearLayout lytAlert,lytOrder;
+    CheckBox cek;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.cart_list);
@@ -103,6 +118,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.checkout);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        gps = new GPSTracker(this);
 
         lytOrder =(LinearLayout)findViewById(R.id.lytOrder);
         lytAlert =(LinearLayout)findViewById(R.id.lytAlert);
@@ -119,6 +135,13 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                     .findFragmentById(R.id.map);
             mapFragment.getMapAsync(this);
         }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            easyPermission = new EasyPermission();
+            easyPermission.requestPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        if (gps.canGetLocation()) {
+            startLocationUpdates();
+        }
 
         edtAlamat = (EditText) findViewById(R.id.edtAlamat);
         edt_telp = (EditText)findViewById(R.id.edt_telp);
@@ -131,12 +154,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
         userid = user.get(session.KEY_PASSENGER_ID);
-        latitude = getIntent().getDoubleExtra("latitude", 0.0);
-        longitude = getIntent().getDoubleExtra("longitude", 0.0);
         poin = getIntent().getIntExtra("poin", 0);
         idFlashDeal = getIntent().getStringExtra("idFlashDeal");
 
-        CheckBox cek = (CheckBox) findViewById(R.id.cek);
+        cek = (CheckBox) findViewById(R.id.cek);
         cek.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -164,6 +185,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         URL_CONF = Constant.URLAPI + "key=" + Constant.KEY + "&tag=konfigurasi&id=4";
         URL_LOKASI = Constant.URLAPI + "key=" + Constant.KEY + "&tag=lokasiToko";
         cartList = getIntent().getParcelableArrayListExtra("cartList");
+        if (cartList.size() <= 0) {
+            btnSend.setEnabled(false);
+        }
         konfigurasi();
         lokasiToko();
         ambilData();
@@ -269,6 +293,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 writer.flush();
                 writer.close();
                 cartList.clear();
+                Constant.cartList.clear();
+                Constant.poin = 0;
+                Constant.jumlah = 0;
 
                 InputStream responseStream = new BufferedInputStream(httpURLConnection.getInputStream());
                 BufferedReader responseStreamReader = new BufferedReader(new InputStreamReader(responseStream));
@@ -300,6 +327,58 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                 Toast.makeText(CartActivity.this, "Order gagal dikirim", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void onPermissionResult(String permission, boolean isGranted) {
+        switch (permission) {
+            case android.Manifest.permission.ACCESS_COARSE_LOCATION:
+                if (!isGranted) {
+                    easyPermission.requestPermission(CartActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
+                }
+                break;
+        }
+    }
+
+    public void startLocationUpdates() {
+        final ProgressDialog loading = ProgressDialog.show(CartActivity.this, "Cari Lokasi", "Sedang mencari lokasi pengguna", false, true);
+        LocationServices.SettingsApi.checkLocationSettings(
+                gps.mGoogleApiClient,
+                gps.mLocationSettingsRequest
+        ).setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(LocationSettingsResult locationSettingsResult) {
+                final Status status = locationSettingsResult.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        Log.i(TAG, "All location settings are satisfied.");
+                        try {
+                            LocationServices.FusedLocationApi.requestLocationUpdates(
+                                    gps.mGoogleApiClient, gps.mLocationRequest, CartActivity.this);
+                        } catch (SecurityException e) {
+                            Toast.makeText(CartActivity.this, "Lokasi tidak terdeteksi", Toast.LENGTH_LONG).show();
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade location settings");
+                        try {
+                            status.startResolutionForResult(CartActivity.this, REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            Log.i(TAG, "PendingIntent unable to execute request.");
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
+                        Toast.makeText(CartActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                }
+                if (gps.mCurrentLocation != null) {
+                    latitude = gps.getLatitude();
+                    longitude = gps.getLongitude();
+                    drawRoute();
+                }
+                loading.dismiss();
+            }
+        });
     }
 
     private void konfigurasi() {
@@ -352,7 +431,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnSend:
-                if (Check()){
+                if (gps.mCurrentLocation == null && !cek.isChecked()) {
+                    Toast.makeText(CartActivity.this, "Aktifkan fitur GPS untuk mengambil lokasi anda", Toast.LENGTH_SHORT).show();
+                } else if (Check()){
                     KirimOrder();
                 }
                 break;
@@ -366,19 +447,17 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         mMap = googleMap;
         mMap.getUiSettings().setMapToolbarEnabled(false);
         mMap.getUiSettings().setZoomGesturesEnabled(false);
+        drawRoute();
+    }
+
+    public void drawRoute(){
         RouteDraw.getInstance(this,CartActivity.this).setFromLatLong(latitude, longitude)
                 .setToLatLong(latToko, lngToko).setGmapAndKey("AIzaSyBUfY7r8eToolFdQcCTRh-HrhZ0fKdo01Y",mMap)
                 .run();
         if (mMap != null) {
-            int height = 70;
-            int width = 70;
-            BitmapDrawable bitmapdraw=(BitmapDrawable) ContextCompat.getDrawable(CartActivity.this, R.mipmap.ic_launcher);
-            Bitmap b=bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude))
-                    .title("location"));
-            mMap.addMarker(new MarkerOptions().position(new LatLng(latToko, lngToko))
-                    .title("Ke tujuan"));
+            mMap.clear();
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)).title("location"));
+            mMap.addMarker(new MarkerOptions().position(new LatLng(latToko, lngToko)).title("Ke tujuan"));
         }
     }
 
@@ -407,10 +486,22 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public Bitmap resizeMapIcons(String iconName, int width, int height){
-        Bitmap imageBitmap = BitmapFactory.decodeResource(getResources(),getResources().getIdentifier(iconName, "drawable", getPackageName()));
-        Bitmap resizedBitmap = Bitmap.createScaledBitmap(imageBitmap, width, height, false);
-        return resizedBitmap;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_CHECK_SETTINGS:
+                switch (resultCode) {
+                    case Activity.RESULT_OK:
+                        Log.i(TAG, "User agreed to make required location settings changes.");
+                        break;
+                    case Activity.RESULT_CANCELED:
+                        Log.i(TAG, "User chose not to make required location settings changes.");
+                        gps.getLatitude();
+                        gps.getLongitude();
+                        break;
+                }
+                break;
+        }
     }
 
     public class AdapterCart extends BaseAdapter {
@@ -495,6 +586,9 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
                         notifyDataSetChanged();
                         TotalCheckOut();
                     }
+                    if (cartList.size() <= 0) {
+                        btnSend.setEnabled(false);
+                    }
                 }
             });
 
@@ -509,6 +603,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
         int jumlahlist = list.getAdapter().getCount();
         totalBarang = 0;
+        totalItem = 0;
         for (int i = 0; i < jumlahlist; i++) {
             View v = list.getAdapter().getView(i, null, null);
             TextView txt = (TextView) v.findViewById(R.id.texTotal1);
@@ -519,6 +614,7 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
             String stringTotal = txt.getText().toString();
             listorder += namaproduk + " x " + stringItem + " = "+ stringTotal + "<br><br>";
             totalBarang += Integer.parseInt(stringTotal);
+            totalItem += Integer.parseInt(stringItem);
         }
         textTotal.setText(formatduit.format(totalBarang)+"");
         subTotal = ongkir + totalBarang;
@@ -534,6 +630,10 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         int id = item.getItemId();
         if (id == android.R.id.home) {
             // app icon in action bar clicked; go home
+            gps.stopLocationUpdates();
+            Constant.cartList = cartList;
+            Constant.poin = poin;
+            Constant.jumlah = totalItem;
             finish();
         }
         return super.onOptionsItemSelected(item);
@@ -541,17 +641,19 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onResume() {
+        if (gps.isConnected()) {
+            startLocationUpdates();
+        }
         super.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        gps.stopLocationUpdates();
+        Constant.cartList = cartList;
+        Constant.poin = poin;
+        Constant.jumlah = totalItem;
         finish();
     }
 
@@ -560,7 +662,39 @@ public class CartActivity extends AppCompatActivity implements View.OnClickListe
         super.onDestroy();
         if (list != null) {
             list.setAdapter(null);
-            cartList.clear();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        gps.connect();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (gps.isConnected()) {
+            gps.stopLocationUpdates();
+            Constant.cartList = cartList;
+            Constant.poin = poin;
+            Constant.jumlah = totalItem;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (gps.isConnected()) {
+            gps.disconnect();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        gps.onLocationChanged(location);
+        latitude = gps.getLatitude();
+        longitude = gps.getLongitude();
+        drawRoute();
     }
 }
