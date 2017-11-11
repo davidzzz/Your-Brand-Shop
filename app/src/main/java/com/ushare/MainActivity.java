@@ -165,11 +165,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //buat list beda klo login dan tidak login
         DrawerMenuItem test1 = new DrawerMenuItem(1, "Profile", R.drawable.qr);
         DrawerMenuItem test2 = new DrawerMenuItem(2, "Voucher / Point", R.drawable.voucher);
-        DrawerMenuItem test3 = new DrawerMenuItem(3, "My Flash Deal", R.drawable.voucher);
+        DrawerMenuItem test3 = new DrawerMenuItem(3, "My Flash Deal", R.drawable.flash_deal);
         DrawerMenuItem test4 = new DrawerMenuItem(4, "Kategori", R.drawable.category);
         DrawerMenuItem test5 = new DrawerMenuItem(5, "Reservasi", R.drawable.reservation);
         DrawerMenuItem test6 = new DrawerMenuItem(6, "History", R.drawable.history);
-        DrawerMenuItem test7 = new DrawerMenuItem(7, "About", R.drawable.about);
+        DrawerMenuItem test7 = new DrawerMenuItem(7, "About", R.drawable.about_black);
         DrawerMenuItem test8 = new DrawerMenuItem(8, isLogin() ? "Logout" : "Login", R.drawable.user);
         menuItems.add(0, test1);
         menuItems.add(1, test2);
