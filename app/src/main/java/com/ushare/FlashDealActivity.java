@@ -232,7 +232,6 @@ public class FlashDealActivity extends AppCompatActivity {
                 }
                 TextSliderView textSliderView = new TextSliderView(FlashDealActivity.this);
                 textSliderView
-                        .description(judul)
                         .image(Constant.URLADMIN + gambar)
                         .setScaleType(BaseSliderView.ScaleType.Fit)
                         .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {

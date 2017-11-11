@@ -180,7 +180,6 @@ public class ProdukDetailActivity extends AppCompatActivity {
                 }
                 TextSliderView textSliderView = new TextSliderView(ProdukDetailActivity.this);
                 textSliderView
-                        .description(judul)
                         .image(Constant.URLADMIN + gambar)
                         .setScaleType(BaseSliderView.ScaleType.Fit)
                         .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
