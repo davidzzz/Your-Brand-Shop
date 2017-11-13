@@ -144,7 +144,9 @@
         <activity android:name=".SentPoinActivity" />
         <activity android:name=".KonfirmasiPoinActivity" />
         <activity android:name=".SentPoinOrderActivity" />
-        <activity android:name=".ReservasiDetailActivity"></activity>
+        <activity android:name=".ReservasiDetailActivity" />
+        <activity android:name=".FeedbackActivity" />
+        <activity android:name=".FeedbackDetailActivity"></activity>
     </application>
 
 </manifest>
