@@ -185,7 +185,7 @@
         android:layout_height="71dp"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        android:background="@drawable/button_spin_green"
+        android:background="@drawable/selector_push"
         android:elevation="7dp"
         />
 </LinearLayout>
