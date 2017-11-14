@@ -3,15 +3,15 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp"
-    android:layout_marginTop="8dp"
-    android:layout_marginBottom="8dp"
+    android:layout_margin="10dp"
+    android:layout_marginTop="40dp"
+    android:layout_marginBottom="40dp"
     android:background="@drawable/shape">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="150dp"
-        android:layout_margin="0dp"
+        android:layout_margin="2dp"
         android:adjustViewBounds="true"
         android:fitsSystemWindows="true"
         android:scaleType="fitXY"
@@ -104,17 +104,19 @@
 
         </LinearLayout>
     </LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:layout_margin="10dp"
         android:layout_marginTop="5dp"
         android:gravity="top|end">
+
         <ImageView
+            android:id="@+id/close"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:id="@+id/close"
-            android:visibility="gone"
-            android:src="@drawable/close"/>
+            android:src="@drawable/close"
+            android:visibility="gone" />
     </RelativeLayout>
 </RelativeLayout>
