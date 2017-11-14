@@ -37,6 +37,7 @@ public class Constant {
     public static final String USER_GCM_ID = "gcm_id";
     public static int GET_SUCCESS_MSG;
     public static int GET_AKSES;
+    public static boolean IS_ADMIN = false;
 
     //BAGIAN LATITUDE
     public static String google_key="AIzaSyBUfY7r8eToolFdQcCTRh-HrhZ0fKdo01Y";

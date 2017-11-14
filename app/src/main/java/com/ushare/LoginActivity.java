@@ -182,14 +182,17 @@ public class LoginActivity extends AppCompatActivity implements GoogleSign.InfoL
                     strTelp = objJson.getString(Constant.USER_LOGIN_TLP);
                     strAkses = objJson.getString("akses");
                     strSex = objJson.getString("sex");
-                    latitude = objJson.getString("latitude");
-                    long_latitude = objJson.getString("long_latitude");
+                    latitude = objJson.getString("lat");
+                    long_latitude = objJson.getString("longlat");
                     if (latitude.equals("0")) {
                         latitude ="0.000000";
                         long_latitude ="0.000000";
                     }
                     fcmid ="";
                     Constant.GET_AKSES = objJson.getInt(Constant.USER_LOGIN_AKSES);
+                    if (objJson.getString("username").equals("admin")) {
+                        Constant.IS_ADMIN = true;
+                    }
                 }
             }
         } catch (JSONException e) {

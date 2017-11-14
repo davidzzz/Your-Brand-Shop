@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         menuItems.add(test5);
         menuItems.add(test6);
         menuItems.add(test7);
-        if (isLogin()) {
+        if (isLogin() && !(akses.equals("2") && !Constant.IS_ADMIN)) {
             DrawerMenuItem test8 = new DrawerMenuItem(8, "Feedback", R.drawable.feedback);
             menuItems.add(test8);
         }
@@ -649,24 +649,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             case 8:
                 if (isLogin()) {
-                    Intent i = new Intent(this, FeedbackActivity.class);
-                    i.putExtra("color", colorValue);
-                    startActivity(i);
-                }
-                overridePendingTransition(R.anim.open_next, R.anim.close_next);
-                break;
-            case 9:
-                if (isLogin()) {
-                    Logout();
-                    break;
+                    if (!(akses.equals("2") && !Constant.IS_ADMIN)) {
+                        Intent i = new Intent(this, FeedbackActivity.class);
+                        i.putExtra("color", colorValue);
+                        startActivity(i);
+                    } else {
+                        Logout();
+                    }
                 } else {
                     Intent i = new Intent(this, LoginActivity.class);
                     startActivity(i);
                     overridePendingTransition(R.anim.open_next, R.anim.close_next);
-                    break;
                 }
-            case 10:
-                if (!isLogin()) {
+                overridePendingTransition(R.anim.open_next, R.anim.close_next);
+                break;
+            case 9:
+                if (isLogin() && !(akses.equals("2") && !Constant.IS_ADMIN)) {
+                    Logout();
+                } else {
                     Intent i = new Intent(this, RegisterActivity.class);
                     startActivity(i);
                     overridePendingTransition(R.anim.open_next, R.anim.close_next);
