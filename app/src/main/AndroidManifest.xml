@@ -131,22 +131,38 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".VoucherDetail" />
-        <activity android:name=".SpinActivity" />
-        <activity android:name=".HelpActivity" />
-        <activity android:name=".HelpDetailActivity" />
-        <activity android:name=".GambarActivity" />
-        <activity android:name=".FlashDealActivity" />
-        <activity android:name=".KategoriActivity" />
-        <activity android:name=".ReservasiActivity" />
-        <activity android:name=".ProdukDetailActivity" />
-        <activity android:name=".LupaPasswordActivity" />
-        <activity android:name=".SentPoinActivity" />
-        <activity android:name=".KonfirmasiPoinActivity" />
-        <activity android:name=".SentPoinOrderActivity" />
-        <activity android:name=".ReservasiDetailActivity" />
-        <activity android:name=".FeedbackActivity" />
-        <activity android:name=".FeedbackDetailActivity"></activity>
+        <activity android:name=".VoucherDetail"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SpinActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".HelpActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".HelpDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".GambarActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".FlashDealActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".KategoriActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ReservasiActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ProdukDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".LupaPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SentPoinActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".KonfirmasiPoinActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".SentPoinOrderActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".ReservasiDetailActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".FeedbackActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name=".FeedbackDetailActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
