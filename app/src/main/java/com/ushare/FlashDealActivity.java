@@ -55,7 +55,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-public class FlashDealActivity extends AppCompatActivity implements EasyPermission.OnPermissionResult, LocationListener {
+public class FlashDealActivity extends AppCompatActivity {
     private Toolbar toolbar;
     String id, URL, nama, idProduk, gambar;
     private SliderLayout mDemoSlider;
@@ -160,28 +160,14 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
             }
         });
 
-        gps = new GPSTracker(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            easyPermission = new EasyPermission();
-            easyPermission.requestPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (gps.canGetLocation()) {
-            startLocationUpdates();
-        }
         order.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (gps.mCurrentLocation == null) {
-                    startLocationUpdates();
-                } else {
-                    Intent i = new Intent(FlashDealActivity.this, CartActivity.class);
-                    i.putExtra("latitude", gps.getLatitude());
-                    i.putExtra("longitude", gps.getLongitude());
-                    i.putExtra("poin", totalPoin);
-                    i.putExtra("idFlashDeal", id);
-                    i.putParcelableArrayListExtra("cartList", cartList);
-                    startActivity(i);
-                }
+                Intent i = new Intent(FlashDealActivity.this, CartActivity.class);
+                i.putExtra("poin", totalPoin);
+                i.putExtra("idFlashDeal", id);
+                i.putParcelableArrayListExtra("cartList", cartList);
+                startActivity(i);
             }
         });
     }
@@ -246,7 +232,6 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
                 }
                 TextSliderView textSliderView = new TextSliderView(FlashDealActivity.this);
                 textSliderView
-                        .description(judul)
                         .image(Constant.URLADMIN + gambar)
                         .setScaleType(BaseSliderView.ScaleType.Fit)
                         .setOnSliderClickListener(new BaseSliderView.OnSliderClickListener() {
@@ -265,70 +250,6 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        gps.getLatitude();
-                        gps.getLongitude();
-                        break;
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onPermissionResult(String permission, boolean isGranted) {
-        switch (permission) {
-            case android.Manifest.permission.ACCESS_COARSE_LOCATION:
-                if (!isGranted) {
-                    easyPermission.requestPermission(FlashDealActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
-                }
-                break;
-        }
-    }
-
-    public void startLocationUpdates() {
-        final ProgressDialog loading = ProgressDialog.show(FlashDealActivity.this, "Cari Lokasi", "Sedang mencari lokasi pengguna", false, true);
-        LocationServices.SettingsApi.checkLocationSettings(
-                gps.mGoogleApiClient,
-                gps.mLocationSettingsRequest
-        ).setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult locationSettingsResult) {
-                final Status status = locationSettingsResult.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        try {
-                            LocationServices.FusedLocationApi.requestLocationUpdates(
-                                    gps.mGoogleApiClient, gps.mLocationRequest, FlashDealActivity.this);
-                        } catch (SecurityException e) {
-                            Toast.makeText(FlashDealActivity.this, "Lokasi tidak terdeteksi", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        try {
-                            status.startResolutionForResult(FlashDealActivity.this, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
-                        Toast.makeText(FlashDealActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                }
-                if (gps.mCurrentLocation != null) {
-                    gps.getLatitude();
-                    gps.getLongitude();
-                }
-                loading.dismiss();
-            }
-        });
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -342,14 +263,6 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
     }
 
     @Override
-    public void onResume() {
-        if (gps.isConnected()) {
-            startLocationUpdates();
-        }
-        super.onResume();
-    }
-
-    @Override
     public void onBackPressed() {
         cekData();
     }
@@ -358,7 +271,6 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
         if (cartList.size() > 0) {
             ShowDialog();
         } else {
-            gps.stopLocationUpdates();
             this.finish();
             overridePendingTransition(R.anim.open_main, R.anim.close_next);
         }
@@ -373,7 +285,6 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
 
             public void onClick(DialogInterface dialog, int which) {
                 cartList.clear();
-                gps.stopLocationUpdates();
                 finish();
             }
         });
@@ -385,32 +296,5 @@ public class FlashDealActivity extends AppCompatActivity implements EasyPermissi
         });
         AlertDialog alert = builder.create();
         alert.show();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        gps.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (gps.isConnected()) {
-            gps.stopLocationUpdates();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (gps.isConnected()) {
-            gps.disconnect();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        gps.onLocationChanged(location);
     }
 }

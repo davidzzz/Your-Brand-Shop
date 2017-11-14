@@ -99,27 +99,27 @@ public class RouteDraw {
         }
         final String dUrl = generateURL(from_lat, from_log, to_lat, to_log, google_key);
         //Showing a dialog till we get the route
-        final ProgressDialog loading = ProgressDialog.show(context, "Getting Route", "Please wait...", false, false);
+        //final ProgressDialog loading = ProgressDialog.show(context, "Getting Route", "Please wait...", false, false);
 
         //Creating a string request
         StringRequest stringRequest = new StringRequest(dUrl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        loading.dismiss();
+                        //loading.dismiss();
                         //Calling the method drawPath to draw the path
                         drawPath(response);
                         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(from_lat, from_log)).zoom(zoom_level).build();
                         CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
                         g_map.animateCamera(cameraUpdate);
-                         callInterface.afterDraw(response);
+                        callInterface.afterDraw(response);
                     }
 
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        loading.dismiss();
+                        //loading.dismiss();
                     }
                 });
 

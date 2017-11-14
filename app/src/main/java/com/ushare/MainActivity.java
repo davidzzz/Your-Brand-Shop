@@ -46,6 +46,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SubAdapter adapter;
     private SliderLayout mDemoSlider;
     String URL, URLKATE, URLFD, URLSTAT, nama_promo, gambar_promo;
-    TextView alert;
+    TextView alert, countCart;
     Adapter flashDealAdapter;
     ArrayList<FlashDeal> listFlashDeal;
     RecyclerView recyclerView;
@@ -164,23 +165,27 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //buat list beda klo login dan tidak login
         DrawerMenuItem test1 = new DrawerMenuItem(1, "Profile", R.drawable.qr);
         DrawerMenuItem test2 = new DrawerMenuItem(2, "Voucher / Point", R.drawable.voucher);
-        DrawerMenuItem test3 = new DrawerMenuItem(3, "My Flash Deal", R.drawable.voucher);
+        DrawerMenuItem test3 = new DrawerMenuItem(3, "My Flash Deal", R.drawable.flash_deal);
         DrawerMenuItem test4 = new DrawerMenuItem(4, "Kategori", R.drawable.category);
         DrawerMenuItem test5 = new DrawerMenuItem(5, "Reservasi", R.drawable.reservation);
         DrawerMenuItem test6 = new DrawerMenuItem(6, "History", R.drawable.history);
-        DrawerMenuItem test7 = new DrawerMenuItem(7, "About", R.drawable.about);
-        DrawerMenuItem test8 = new DrawerMenuItem(8, isLogin() ? "Logout" : "Login", R.drawable.user);
-        menuItems.add(0, test1);
-        menuItems.add(1, test2);
-        menuItems.add(2, test3);
-        menuItems.add(3, test4);
-        menuItems.add(4, test5);
-        menuItems.add(5, test6);
-        menuItems.add(6, test7);
-        menuItems.add(7, test8);
+        DrawerMenuItem test7 = new DrawerMenuItem(7, "About", R.drawable.about_black);
+        menuItems.add(test1);
+        menuItems.add(test2);
+        menuItems.add(test3);
+        menuItems.add(test4);
+        menuItems.add(test5);
+        menuItems.add(test6);
+        menuItems.add(test7);
+        if (isLogin()) {
+            DrawerMenuItem test8 = new DrawerMenuItem(8, "Feedback", R.drawable.feedback);
+            menuItems.add(test8);
+        }
+        DrawerMenuItem test9 = new DrawerMenuItem(9, isLogin() ? "Logout" : "Login", R.drawable.user);
+        menuItems.add(test9);
         if (!isLogin()) {
-            DrawerMenuItem test9 = new DrawerMenuItem(9, "Daftar", R.drawable.user);
-            menuItems.add(8, test9);
+            DrawerMenuItem test10 = new DrawerMenuItem(9, "Daftar", R.drawable.user);
+            menuItems.add(test10);
         }
         mDrawerMenuAdapter = new DrawerMenuItemAdapter(MainActivity.this, R.layout.layout_drawer_menu_item, menuItems);
         mLvDrawerMenu.setAdapter(mDrawerMenuAdapter);
@@ -644,6 +649,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 break;
             case 8:
                 if (isLogin()) {
+                    Intent i = new Intent(this, FeedbackActivity.class);
+                    i.putExtra("color", colorValue);
+                    startActivity(i);
+                }
+                overridePendingTransition(R.anim.open_next, R.anim.close_next);
+                break;
+            case 9:
+                if (isLogin()) {
                     Logout();
                     break;
                 } else {
@@ -652,7 +665,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     overridePendingTransition(R.anim.open_next, R.anim.close_next);
                     break;
                 }
-            case 9:
+            case 10:
                 if (!isLogin()) {
                     Intent i = new Intent(this, RegisterActivity.class);
                     startActivity(i);
@@ -794,6 +807,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem item = menu.findItem(R.id.shop);
+        if (akses != null && akses.equals("1")) {
+            MenuItemCompat.setActionView(item, R.layout.badge);
+            RelativeLayout notifCount = (RelativeLayout) MenuItemCompat.getActionView(item);
+            RelativeLayout layout = (RelativeLayout) notifCount.findViewById(R.id.badge_layout);
+            countCart = (TextView) notifCount.findViewById(R.id.badge);
+            countCart.setText(Constant.jumlah + "");
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(MainActivity.this, CartActivity.class);
+                    i.putExtra("poin", Constant.poin);
+                    i.putParcelableArrayListExtra("cartList", Constant.cartList);
+                    startActivity(i);
+                }
+            });
+        } else {
+            item.setVisible(false);
+        }
         return true;
     }
 
@@ -818,6 +850,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onResume() {
         mDemoSlider.startAutoCycle();
+        if (countCart != null) {
+            countCart.setText(Constant.jumlah + "");
+        }
         super.onResume();
     }
 

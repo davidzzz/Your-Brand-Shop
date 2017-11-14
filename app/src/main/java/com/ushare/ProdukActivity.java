@@ -11,12 +11,14 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -63,24 +66,21 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProdukActivity extends AppCompatActivity implements EasyPermission.OnPermissionResult, LocationListener {
-    private static final String TAG = ProdukActivity.class.getSimpleName();
+public class ProdukActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ListView listview;
     private AdapterSinz adapter = null;
     private List<ItemMenu> arraylist;
     private ArrayList<Cart> cartList;
-    private EasyPermission easyPermission;
     private LinearLayout estimasi;
     String URL, URL_MENU, id;
-    private static final int REQUEST_CHECK_SETTINGS = 0x1;
     private static final int PRODUK_DETAIL = 100;
     private int poin = 0, total_item = 0, totalBarang = 0, currentPosition;
 
-    TextView txtTotal, total_notif;
+    TextView txtTotal, total_notif, countCart;
     DecimalFormat formatduit = new DecimalFormat();
     ProgressBar loading;
-    GPSTracker gps;
+    boolean onActivityResult = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -92,33 +92,17 @@ public class ProdukActivity extends AppCompatActivity implements EasyPermission.
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         txtTotal = (TextView) findViewById(R.id.txtTotal);
         arraylist = new ArrayList<ItemMenu>();
-        cartList = new ArrayList<>();
         total_notif = (TextView) findViewById(R.id.total_notif);
         estimasi = (LinearLayout) findViewById(R.id.lytOrder);
         loading = (ProgressBar) findViewById(R.id.prgLoading);
         estimasi.setVisibility(View.GONE);
-        gps = new GPSTracker(this);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            easyPermission = new EasyPermission();
-            easyPermission.requestPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (gps.canGetLocation()) {
-            startLocationUpdates();
-        }
         estimasi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (gps.mCurrentLocation == null) {
-                    startLocationUpdates();
-                    Toast.makeText(ProdukActivity.this, "Aktifkan fitur GPS untuk mengambil lokasi anda", Toast.LENGTH_SHORT).show();
-                } else {
-                    Intent i = new Intent(ProdukActivity.this, CartActivity.class);
-                    i.putExtra("latitude", gps.getLatitude());
-                    i.putExtra("longitude", gps.getLongitude());
-                    i.putExtra("poin", poin);
-                    i.putParcelableArrayListExtra("cartList", cartList);
-                    startActivity(i);
-                }
+                Intent i = new Intent(ProdukActivity.this, CartActivity.class);
+                i.putExtra("poin", poin);
+                i.putParcelableArrayListExtra("cartList", cartList);
+                startActivity(i);
             }
         });
         id = getIntent().getStringExtra("id");
@@ -181,23 +165,43 @@ public class ProdukActivity extends AppCompatActivity implements EasyPermission.
         }
         adapter.notifyDataSetChanged();
         loading.setVisibility(View.GONE);
+        loadCart();
+    }
+
+    public void loadCart(){
+        cartList = Constant.cartList;
+        poin = 0;
+        total_item = 0;
+        totalBarang = 0;
+        for (int i = 0; i < cartList.size(); i++) {
+            Cart c = cartList.get(i);
+            totalBarang += (c.getQuantity() * c.getHarga());
+            total_item += c.getQuantity();
+            poin += (c.getQuantity() * c.getPoin());
+        }
+        for (int i = 0; i < arraylist.size(); i++) {
+            ItemMenu item = (ItemMenu) adapter.getItem(i);
+            Cart c = adapter.findCart(item.getIdMenu());
+            if (c != null) {
+                item.setQuantity(c.getQuantity());
+                adapter.notifyDataSetChanged();
+            }
+        }
+        if (cartList.size() == 0) {
+            estimasi.setVisibility(View.GONE);
+        } else {
+            estimasi.setVisibility(View.VISIBLE);
+            txtTotal.setText("Rp " + formatduit.format(totalBarang));
+            total_notif.setText(total_item + "");
+            if (countCart != null) {
+                countCart.setText(total_item + "");
+            }
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case REQUEST_CHECK_SETTINGS:
-                switch (resultCode) {
-                    case Activity.RESULT_OK:
-                        Log.i(TAG, "User agreed to make required location settings changes.");
-                        break;
-                    case Activity.RESULT_CANCELED:
-                        Log.i(TAG, "User chose not to make required location settings changes.");
-                        gps.getLatitude();
-                        gps.getLongitude();
-                        break;
-                }
-                break;
             case PRODUK_DETAIL:
                 if (data != null) {
                     Cart c = data.getParcelableExtra("cart");
@@ -221,61 +225,12 @@ public class ProdukActivity extends AppCompatActivity implements EasyPermission.
                         estimasi.setVisibility(View.VISIBLE);
                         txtTotal.setText("Rp " + formatduit.format(totalBarang));
                         total_notif.setText(total_item + "");
+                        countCart.setText(total_item + "");
                     }
                 }
+                onActivityResult = true;
                 break;
         }
-    }
-
-    @Override
-    public void onPermissionResult(String permission, boolean isGranted) {
-        switch (permission) {
-            case android.Manifest.permission.ACCESS_COARSE_LOCATION:
-                if (!isGranted) {
-                    easyPermission.requestPermission(ProdukActivity.this, android.Manifest.permission.ACCESS_COARSE_LOCATION);
-                }
-                break;
-        }
-    }
-
-    public void startLocationUpdates() {
-        final ProgressDialog loading = ProgressDialog.show(ProdukActivity.this, "Cari Lokasi", "Sedang mencari lokasi pengguna", false, true);
-        LocationServices.SettingsApi.checkLocationSettings(
-                gps.mGoogleApiClient,
-                gps.mLocationSettingsRequest
-        ).setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult locationSettingsResult) {
-                final Status status = locationSettingsResult.getStatus();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        Log.i(TAG, "All location settings are satisfied.");
-                        try {
-                            LocationServices.FusedLocationApi.requestLocationUpdates(
-                                    gps.mGoogleApiClient, gps.mLocationRequest, ProdukActivity.this);
-                        } catch (SecurityException e) {
-                            Toast.makeText(ProdukActivity.this, "Lokasi tidak terdeteksi", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade location settings");
-                        try {
-                            status.startResolutionForResult(ProdukActivity.this, REQUEST_CHECK_SETTINGS);
-                        } catch (IntentSender.SendIntentException e) {
-                            Log.i(TAG, "PendingIntent unable to execute request.");
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        String errorMessage = "Location settings are inadequate, and cannot be fixed here. Fix in Settings.";
-                        Toast.makeText(ProdukActivity.this, errorMessage, Toast.LENGTH_LONG).show();
-                }
-                if (gps.mCurrentLocation != null) {
-                    gps.getLatitude();
-                    gps.getLongitude();
-                }
-                loading.dismiss();
-            }
-        });
     }
 
     public class AdapterSinz extends BaseAdapter {
@@ -451,6 +406,30 @@ public class ProdukActivity extends AppCompatActivity implements EasyPermission.
             txtTotal.setText("Rp " + formatduit.format(totalBarang));
             total_notif.setText(total_item + "");
         }
+        countCart.setText(total_item + "");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem help = menu.findItem(R.id.help);
+        help.setVisible(false);
+        MenuItem item = menu.findItem(R.id.shop);
+        MenuItemCompat.setActionView(item, R.layout.badge);
+        RelativeLayout notifCount = (RelativeLayout) MenuItemCompat.getActionView(item);
+        RelativeLayout layout = (RelativeLayout) notifCount.findViewById(R.id.badge_layout);
+        countCart = (TextView) notifCount.findViewById(R.id.badge);
+        layout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ProdukActivity.this, CartActivity.class);
+                i.putExtra("poin", poin);
+                i.putParcelableArrayListExtra("cartList", cartList);
+                startActivity(i);
+            }
+        });
+        return true;
     }
 
     @Override
@@ -468,8 +447,10 @@ public class ProdukActivity extends AppCompatActivity implements EasyPermission.
 
     @Override
     public void onResume() {
-        if (gps.isConnected()) {
-            startLocationUpdates();
+        if (!onActivityResult) {
+            loadCart();
+        } else {
+            onActivityResult = false;
         }
         super.onResume();
     }
@@ -490,61 +471,11 @@ public class ProdukActivity extends AppCompatActivity implements EasyPermission.
 
     private void cekData() {
         if (cartList.size() > 0) {
-            ShowDialog();
-        } else {
-            gps.stopLocationUpdates();
-            this.finish();
-            overridePendingTransition(R.anim.open_main, R.anim.close_next);
+            Constant.cartList = cartList;
+            Constant.poin = poin;
+            Constant.jumlah = total_item;
         }
-    }
-
-    private void ShowDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setCancelable(false);
-        builder.setTitle(R.string.delete_confirm);
-        builder.setMessage(getString(R.string.delete_msg));
-        builder.setPositiveButton(getString(R.string.ya), new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                cartList.clear();
-                gps.stopLocationUpdates();
-                finish();
-            }
-        });
-
-        builder.setNegativeButton(getString(R.string.tidak), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        gps.connect();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (gps.isConnected()) {
-            gps.stopLocationUpdates();
-        }
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (gps.isConnected()) {
-            gps.disconnect();
-        }
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        gps.onLocationChanged(location);
+        finish();
+        overridePendingTransition(R.anim.open_main, R.anim.close_next);
     }
 }

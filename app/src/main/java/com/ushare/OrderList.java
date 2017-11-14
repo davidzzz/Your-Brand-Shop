@@ -1,17 +1,24 @@
 package com.ushare;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -33,17 +40,23 @@ import org.json.JSONObject;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class OrderList extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
-    private Toolbar toolbar;
     private ListView list;
     private List<ItemOrder> itemList;
     private ItemOrder object;
     private OrderSellerAdapter adapter;
     String id_user, tipe, URL;
+    Button tanggal;
+    EditText search;
     boolean isFlashDeal;
+    Timer timer = new Timer();
+    private final long DELAY = 500;
     SessionManager session;
     HashMap<String, String> user;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -79,6 +92,35 @@ public class OrderList extends Fragment implements SwipeRefreshLayout.OnRefreshL
                 ambilData();
             }
         });
+        search = (EditText) rootView.findViewById(R.id.search_text);
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                timer.cancel();
+                timer = new Timer();
+                timer.schedule(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                ambilData();
+                            }
+                        },
+                        DELAY
+                );
+            }
+        });
+        tanggal = (Button) rootView.findViewById(R.id.tanggal);
+        pilihTanggal();
 
         list.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
@@ -94,7 +136,51 @@ public class OrderList extends Fragment implements SwipeRefreshLayout.OnRefreshL
         return rootView;
     }
 
+    public List<ItemOrder> getListItem() {
+        return itemList;
+    }
+
+    public BaseAdapter getAdapter() {
+        return adapter;
+    }
+
+    public void pilihTanggal() {
+        final Calendar c = Calendar.getInstance();
+        tanggal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int y = c.get(Calendar.YEAR);
+                int m = c.get(Calendar.MONTH);
+                int d = c.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                String day, month;
+                                c.set(year, monthOfYear, dayOfMonth);
+                                if (dayOfMonth < 10) {
+                                    day = '0' + String.valueOf(dayOfMonth);
+                                } else {
+                                    day = String.valueOf(dayOfMonth);
+                                }
+                                monthOfYear++; // disini bulan dimulai dari 0
+                                if (monthOfYear < 10) {
+                                    month = '0' + String.valueOf(monthOfYear);
+                                } else {
+                                    month = String.valueOf(monthOfYear);
+                                }
+                                tanggal.setText(year + "-" + month + "-" + day);
+                                ambilData();
+                            }
+                        }, y, m, d);
+                datePickerDialog.show();
+            }
+        });
+    }
+
     private void ambilData() {
+        String tgl = tanggal.getText().toString().equals("TANGGAL") ? "" : tanggal.getText().toString();
+        URL += "&search=" + search.getText().toString() + "&tanggal=" + tgl;
         JsonObjectRequest jsonKate = new JsonObjectRequest(URL, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -169,6 +255,7 @@ public class OrderList extends Fragment implements SwipeRefreshLayout.OnRefreshL
     @Override
     public void onDestroy() {
         super.onDestroy();
+        timer.cancel();
         if (list != null) {
             list.setAdapter(null);
         }

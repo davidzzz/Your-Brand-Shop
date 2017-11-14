@@ -1,14 +1,18 @@
 package com.ushare;
 
 import android.content.Intent;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Cache;
@@ -36,8 +40,11 @@ public class KategoriActivity extends AppCompatActivity {
     GridView gridView;
     ArrayList<ItemSub> itemList;
     SubAdapter adapter;
-    String URLKATE;
+    String URLKATE, akses;
     int colorValue;
+    TextView countCart;
+    SessionManager session;
+    HashMap<String, String> user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +54,9 @@ public class KategoriActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle("KATEGORI");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        session = new SessionManager(getApplicationContext());
+        user = session.getUserDetails();
+        akses = user.get(SessionManager.KEY_AKSES);
         gridView = (GridView) findViewById(R.id.gridView);
         colorValue = getIntent().getIntExtra("color", 0);
         LinearLayout layout = (LinearLayout)findViewById(R.id.activity_kategori);
@@ -105,6 +115,34 @@ public class KategoriActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuItem help = menu.findItem(R.id.help);
+        help.setVisible(false);
+        MenuItem item = menu.findItem(R.id.shop);
+        if (akses.equals("1")) {
+            MenuItemCompat.setActionView(item, R.layout.badge);
+            RelativeLayout notifCount = (RelativeLayout) MenuItemCompat.getActionView(item);
+            RelativeLayout layout = (RelativeLayout) notifCount.findViewById(R.id.badge_layout);
+            countCart = (TextView) notifCount.findViewById(R.id.badge);
+            countCart.setText(Constant.jumlah + "");
+            layout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i = new Intent(KategoriActivity.this, CartActivity.class);
+                    i.putExtra("poin", Constant.poin);
+                    i.putParcelableArrayListExtra("cartList", Constant.cartList);
+                    startActivity(i);
+                }
+            });
+        } else {
+            item.setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -115,5 +153,13 @@ public class KategoriActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        if (countCart != null) {
+            countCart.setText(Constant.jumlah + "");
+        }
+        super.onResume();
     }
 }

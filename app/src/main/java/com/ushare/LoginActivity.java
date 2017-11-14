@@ -33,13 +33,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class LoginActivity extends AppCompatActivity
-        implements GoogleSign.InfoLoginGoogleCallback, FacebookSign.InfoLoginFaceCallback, OnClickListener {
+public class LoginActivity extends AppCompatActivity implements GoogleSign.InfoLoginGoogleCallback, OnClickListener {
     Button txtRegis, txtForgot;
-    private Button btnGl, btnFc, btnSign;
+    private Button btnGl, btnSign;
     EditText username, pass;
     GoogleSign googleSign; // Google sign-in
-    private FacebookSign facebookSign; // Facebook sign-in
     String strEmail, strAlamat, strPass, strMessage, strName, strPoin, strTelp, strPassengerId,strAkses,strSex,latitude,long_latitude;
     SessionManager session;
     String email,fcmid;
@@ -63,16 +61,11 @@ public class LoginActivity extends AppCompatActivity
         // FragmentActivity and interface listener
         googleSign = new GoogleSign(this, this);
 
-        // FragmentActivity and interface listener
-        facebookSign = new FacebookSign(this, this);
-
         btnGl = (Button) findViewById(R.id.btnGogle);
-        btnFc = (Button) findViewById(R.id.btnFace);
         btnSign = (Button) findViewById(R.id.btnSign);
 
         // bikin button di klik
         btnGl.setOnClickListener(this);
-        btnFc.setOnClickListener(this);
         btnSign.setOnClickListener(this);
     }
 
@@ -80,7 +73,6 @@ public class LoginActivity extends AppCompatActivity
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         googleSign.resultGoogleLogin(requestCode, resultCode, data); // result
-        facebookSign.resultFaceLogin(requestCode, resultCode, data); // result
     }
 
     @Override
@@ -92,17 +84,6 @@ public class LoginActivity extends AppCompatActivity
                 if (Utils.isConnectedToInternet(this)) {
                     // ketika konek internet ekseskusi
                     googleSign.signIn();
-                } else {
-                    // ini ketika tidak ada koneksi
-                    Toast.makeText(this, "tidak ada koneksi", Toast.LENGTH_SHORT).show();
-                }
-
-                break;
-            case R.id.btnFace:
-                // ini button sdk facebook
-                if (Utils.isConnectedToInternet(this)) {
-                    // ketika konek internet ekseskusi
-                    facebookSign.signIn();
                 } else {
                     // ini ketika tidak ada koneksi
                     Toast.makeText(this, "tidak ada koneksi", Toast.LENGTH_SHORT).show();
@@ -271,49 +252,6 @@ public class LoginActivity extends AppCompatActivity
 
     @Override
     public void loginFailed() {
-        Toast.makeText(this, "Gagal Login..", Toast.LENGTH_SHORT).show();
-    }
-
-    // LISTNER FACEBOOK SIGN-IN
-    @Override
-    public void getInfoFace(String id, String name, String email, String photo) {
-        if(email !=null && name!=null && photo!=null){
-            ProfileImg = photo;
-
-            final ProgressDialog loading = ProgressDialog.show(this, "Loading..", "Tunggu ya..", false, false);
-            String URL_LOGIN = Constant.URLAPI + "key=" + Constant.KEY + "&tag=login_fb" + "&email=" + email;
-            JsonObjectRequest jsonLogin = new JsonObjectRequest(URL_LOGIN,
-                    new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            // Dismissing progress dialog
-                            parseJsonLogin(response);
-                            loading.dismiss();
-                        }
-
-
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    loading.dismiss();
-
-                }
-            });
-            jsonLogin.setRetryPolicy(new DefaultRetryPolicy(5000, 20,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            myapp.getInstance().addToRequestQueue(jsonLogin);
-        } else {
-            cancelLoginFace();
-        }
-    }
-
-    @Override
-    public void cancelLoginFace() {
-        Toast.makeText(this, "Cancel Login..", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void erroLoginFace(FacebookException e) {
         Toast.makeText(this, "Gagal Login..", Toast.LENGTH_SHORT).show();
     }
 }
