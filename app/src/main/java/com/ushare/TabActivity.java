@@ -1,6 +1,8 @@
 package com.ushare;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
@@ -10,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -17,6 +20,7 @@ import android.widget.TextView;
 
 import com.ushare.adapter.TabAdapter;
 import com.ushare.model.ItemOrder;
+import com.ushare.util.Constant;
 import com.ushare.util.SessionManager;
 
 import org.w3c.dom.Text;
@@ -47,6 +51,13 @@ public class TabActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setTitle(tipe.equals("history") ? "ORDER" : "VOUCHER");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Constant.COLOR));
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Constant.COLOR);
+        } else {
+            window.setTitleColor(Constant.COLOR);
+        }
         LinearLayout layoutPoin = (LinearLayout) findViewById(R.id.layout_poin);
         SessionManager session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();

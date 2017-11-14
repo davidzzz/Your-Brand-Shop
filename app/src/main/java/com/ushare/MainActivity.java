@@ -41,6 +41,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -65,6 +66,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -116,6 +119,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         setSupportActionBar(mToolbar);
         //getSupportActionBar().setTitle(getString(R.string.app_name));
         getSupportActionBar().setIcon(R.drawable.logo);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Constant.COLOR));
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Constant.COLOR);
+        } else {
+            window.setTitleColor(Constant.COLOR);
+        }
 
         //jika os android di atas lolipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

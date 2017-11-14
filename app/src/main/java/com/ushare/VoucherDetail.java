@@ -1,11 +1,14 @@
 package com.ushare;
 
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -39,6 +42,13 @@ public class VoucherDetail extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("Voucher");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Constant.COLOR));
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Constant.COLOR);
+        } else {
+            window.setTitleColor(Constant.COLOR);
+        }
         id = getIntent().getIntExtra("id", 0);
         URL = Constant.URLADMIN + "api/voucher.php?key=" + Constant.KEY + "&tag=listdetail&id=" + id;
         viewVoucher();

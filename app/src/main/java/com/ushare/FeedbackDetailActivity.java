@@ -1,13 +1,17 @@
 package com.ushare;
 
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.ushare.model.Feedback;
+import com.ushare.util.Constant;
 
 public class FeedbackDetailActivity extends AppCompatActivity {
     Toolbar toolbar;
@@ -22,6 +26,13 @@ public class FeedbackDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("RESERVASI");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Constant.COLOR));
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Constant.COLOR);
+        } else {
+            window.setTitleColor(Constant.COLOR);
+        }
         teksNama = (TextView) findViewById(R.id.nama);
         teksKomentar = (TextView) findViewById(R.id.komentar);
         teksWaktu = (TextView) findViewById(R.id.waktu);

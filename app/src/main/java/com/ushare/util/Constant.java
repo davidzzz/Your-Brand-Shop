@@ -1,5 +1,7 @@
 package com.ushare.util;
 
+import android.graphics.Color;
+
 import com.ushare.model.Cart;
 
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ public class Constant {
     //public static String URLADMIN = "http://192.168.56.1/adminrestoran/";
     //public static String URLAPI = "http://192.168.56.1/adminrestoran/api/api.php?";
     public static String KEY = "12345";// USAHKAN PAKAI CAMPURAN KARAKTER
+    public static int COLOR = Color.RED;
 
     public static String TAG_SUB = "sub";
     public static String TAG_PROMO = "promo";

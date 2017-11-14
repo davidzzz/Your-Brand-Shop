@@ -3,12 +3,15 @@ package com.ushare;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -19,6 +22,7 @@ import com.ushare.app.myapp;
 import com.ushare.util.Constant;
 import com.ushare.util.SessionManager;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
@@ -56,8 +60,6 @@ public class SplashActivity extends Activity {
 
             //  Apply changes
             e.apply();
-
-
         } else {
             start();
         }
@@ -67,11 +69,11 @@ public class SplashActivity extends Activity {
         if (isLogin()) {
             log();
         }
+        konfigurasi();
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
                 Intent i = new Intent(SplashActivity.this, MainActivity.class);
                 startActivity(i);
                 finish();
@@ -96,6 +98,27 @@ public class SplashActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
+            }
+        });
+        jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        myapp.getInstance().addToRequestQueue(jsonKate);
+    }
+
+    private void konfigurasi() {
+        String URL_CONF = Constant.URLAPI + "key=" + Constant.KEY + "&tag=konfigurasi&id=6";
+        JsonObjectRequest jsonKate = new JsonObjectRequest(URL_CONF, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONObject feedObj = response.getJSONObject("data");
+                    int color = feedObj.getInt("value");
+                    Constant.COLOR = Color.parseColor("#" + String.format("%06x", color));
+                } catch (JSONException e) {
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
             }
         });
         jsonKate.setRetryPolicy(new DefaultRetryPolicy(5000, 20, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));

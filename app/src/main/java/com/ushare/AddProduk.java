@@ -1,12 +1,15 @@
 package com.ushare;
 
 import android.app.ProgressDialog;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -64,6 +67,13 @@ public class AddProduk extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(id_menu != null ? "Edit" : "Tambah" + " Produk");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Constant.COLOR));
+        Window window = getWindow();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            window.setStatusBarColor(Constant.COLOR);
+        } else {
+            window.setTitleColor(Constant.COLOR);
+        }
         session = new SessionManager(getApplicationContext());
         user = session.getUserDetails();
         userid = user.get(SessionManager.KEY_PASSENGER_ID);
