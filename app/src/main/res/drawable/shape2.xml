@@ -3,6 +3,7 @@
     android:shape="rectangle"   >
 
     <solid
+        android:color="#f7f7f7"
         android:foreground="?android:attr/selectableItemBackgroundBorderless"
         >
     </solid>
