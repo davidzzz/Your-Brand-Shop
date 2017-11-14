@@ -75,7 +75,7 @@ public class TabActivity extends AppCompatActivity {
             } else {
                 layoutPoin.setVisibility(View.VISIBLE);
                 TextView poin = (TextView) findViewById(R.id.poin);
-                poin.setText("MY POINTS : " + user.get(SessionManager.KEY_POIN));
+                poin.setText("" + user.get(SessionManager.KEY_POIN));
                 Button spin = (Button) findViewById(R.id.spin);
                 spin.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -164,7 +164,7 @@ public class TabActivity extends AppCompatActivity {
         super.onRestart();
         if (tipe.equals("voucher")) {
             TextView poin = (TextView) findViewById(R.id.poin);
-            poin.setText("MY POINTS : " + user.get(SessionManager.KEY_POIN));
+            poin.setText("" + user.get(SessionManager.KEY_POIN));
         }
     }
 }
