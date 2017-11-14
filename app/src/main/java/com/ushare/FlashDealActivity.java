@@ -216,7 +216,7 @@ public class FlashDealActivity extends AppCompatActivity {
                 progressBar.setProgress(sisa);
                 teksSisa.setText(sisa + " / " + item);
                 teksNama.setText(nama);
-                teksTanggal.setText("Berlaku s/d " + formatter.format(c.getTime()));
+                teksTanggal.setText("s/d " + formatter.format(c.getTime()));
                 teksHarga.setText("Rp. " + harga);
                 teksHargaAsli.setText("Rp. " + feedObj.getString("harga_asli"), TextView.BufferType.SPANNABLE);
                 teksPoin.setText("Poin : " + poin);
