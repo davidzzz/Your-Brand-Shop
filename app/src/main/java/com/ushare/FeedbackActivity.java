@@ -1,5 +1,6 @@
 package com.ushare;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -163,7 +165,10 @@ public class FeedbackActivity extends AppCompatActivity {
         @Override
         public void onPostExecute(Boolean result) {
             if (result != null && result) {
-                Toast.makeText(FeedbackActivity.this, response, Toast.LENGTH_LONG).show();
+                Dialog dialog = new Dialog(FeedbackActivity.this);
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                dialog.setContentView(R.layout.feedback_success);
+                dialog.show();
             } else {
                 Toast.makeText(FeedbackActivity.this, "Feedback gagal dikirim", Toast.LENGTH_LONG).show();
             }

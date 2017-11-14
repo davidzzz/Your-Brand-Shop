@@ -20,6 +20,7 @@
     <!--bagian informasi detail kategori-->
 
     <string name="info_detail_sub">You can choose seller list name, for filter menu in this category, </string>
+    <string name="feedback">TERIMA KASIH TELAH MELUANGKAN WAKTU UNTUK MEMBERIKAN FEEDBACK. KAMI AKAN MEMPROSES FEEDBACK ANDA SECEPATNYA.</string>
 
     <!--bagian validate form-->
     <string name="error_invalid_password">Password tidak valid</string>
