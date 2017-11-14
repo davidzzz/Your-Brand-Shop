@@ -18,9 +18,9 @@
         android:id="@+id/layout_poin">
 
         <TextView
-            android:layout_width="20dp"
-            android:layout_height="19dp"
-            android:background="@drawable/poin"
+            android:layout_width="21dp"
+            android:layout_height="21dp"
+            android:background="@drawable/coins"
             />
         <TextView
             android:layout_width="0dp"

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,28 +11,75 @@
         layout="@layout/toolbar" />
 
     <LinearLayout
+        android:id="@+id/layout_poin"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:id="@+id/layout_poin">
-        <TextView
-            android:layout_width="20dp"
-            android:layout_height="19dp"
-            android:background="@drawable/poin"
-            />
-        <TextView
-            android:layout_width="0dp"
+        android:layout_height="51dp"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+        <ImageView
+            android:layout_width="31dp"
+            android:layout_height="31dp"
+            android:layout_marginTop="2dp"
+            android:background="@drawable/coins" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="16sp"
-            android:id="@+id/poin"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:textSize="16sp"
-            android:id="@+id/cost"/>
+
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="My Points"
+                    android:textAlignment="center"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/poin"
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp"
+                    android:textAlignment="center"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cost"
+                    android:textAlignment="center"
+
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/cost"
+                    android:layout_width="match_parent"
+                    android:layout_height="31dp"
+                    android:textAlignment="center"
+                    android:textSize="13sp" />
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
+
+
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -44,7 +92,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_margin="10dp"
+            android:layout_margin="35dp"
             android:src="@drawable/wheel" />
 
         <RelativeLayout
@@ -132,10 +180,10 @@
         android:id="@+id/btn_rotate"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="100dp"
-        android:layout_height="wrap_content"
+        android:layout_height="71dp"
         android:layout_gravity="center"
         android:layout_margin="5dp"
-        android:background="@drawable/button_bg_rounded_corners"
+        android:background="@drawable/button_spin_green"
         android:elevation="7dp"
-        android:text="Rotate" />
+        />
 </LinearLayout>
