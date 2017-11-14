@@ -8,6 +8,7 @@
     <com.ushare.view.SquareImage
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/shape"
         android:id="@+id/gambar"/>
     <TextView
         android:layout_width="wrap_content"
