@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/lytThumb"
-        android:layout_margin="5dp"
+        android:layout_margin="2dp"
         android:orientation="vertical"
         android:background="@drawable/shape"
         >
@@ -17,7 +17,6 @@
             android:id="@+id/imgThumb"
             android:layout_width="match_parent"
             android:layout_height="96dp"
-            android:background="@drawable/shape"
             android:scaleType="centerCrop"
             android:src="@drawable/loading" />
         <View

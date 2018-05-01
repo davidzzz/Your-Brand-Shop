@@ -1,25 +1,35 @@
 {
   "project_info": {
-    "project_number": "405838264341",
-    "project_id": "restoran-178706"
+    "project_number": "267733576565",
+    "firebase_url": "https://your-brand-shop-f9178.firebaseio.com",
+    "project_id": "your-brand-shop-f9178",
+    "storage_bucket": "your-brand-shop-f9178.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:405838264341:android:033c90d3e6d2a230",
+        "mobilesdk_app_id": "1:267733576565:android:1c0d46bc10cce344",
         "android_client_info": {
-          "package_name": "com.ushare"
+          "package_name": "com.guritadigital.shop"
         }
       },
       "oauth_client": [
         {
-          "client_id": "405838264341-gpocabpe14tjme4jjsvahfti9soh9or6.apps.googleusercontent.com",
+          "client_id": "267733576565-17v4q6c9ugbqbga12eq9648jojvp327u.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.guritadigital.shop",
+            "certificate_hash": "878e3f66f29b8262358a97ec32c33a73fa587528"
+          }
+        },
+        {
+          "client_id": "267733576565-bg1pm4b736voibcr22ed0oi0eo3t2ea5.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDZn0L2QP63u1GybZViGcW3nMWepBsHD8M"
+          "current_key": "AIzaSyB5ILxv2X3chw7MNrR0dLMTEtWjCqsCDf4"
         }
       ],
       "services": {
@@ -27,11 +37,16 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "267733576565-bg1pm4b736voibcr22ed0oi0eo3t2ea5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }

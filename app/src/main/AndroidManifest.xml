@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ushare">
+    package="com.guritadigital.shop">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
-        android:name=".app.myapp"
+        android:name="com.guritadigital.shop.app.myapp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -22,7 +22,7 @@
         android:supportsRtl="true"
         android:theme="@style/MyMaterialTheme">
         <activity
-            android:name=".SplashActivity"
+            android:name="com.guritadigital.shop.SplashActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -32,57 +32,62 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.guritadigital.shop.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.SEARCH" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
+
+            <meta-data
+                android:name="android.app.searchable"
+                android:resource="@layout/search" />
         </activity>
         <activity
-            android:name=".Intro"
+            android:name="com.guritadigital.shop.Intro"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".OrderDetail"
+            android:name="com.guritadigital.shop.OrderDetail"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".LoginActivity"
+            android:name="com.guritadigital.shop.LoginActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".RegisterActivity"
+            android:name="com.guritadigital.shop.RegisterActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MenuActivity"
+            android:name="com.guritadigital.shop.MenuActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ListSeller"
+            android:name="com.guritadigital.shop.ListSeller"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ProdukActivity"
+            android:name="com.guritadigital.shop.ProdukActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".CartActivity"
+            android:name="com.guritadigital.shop.CartActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ProfileActivity"
+            android:name="com.guritadigital.shop.ProfileActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".TabActivity"
+            android:name="com.guritadigital.shop.TabActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".AddProduk"
+            android:name="com.guritadigital.shop.AddProduk"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
 
@@ -97,12 +102,6 @@
             android:windowSoftInputMode="stateAlwaysHidden|adjustPan" />
         <!-- Google singin pengaturan api -->
 
-
-        <!-- Facebook pengaturan api -->
-        <meta-data
-            android:name="com.facebook.sdk.ApplicationId"
-            android:value="@string/id_facebook" />
-
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -114,55 +113,71 @@
 
         <!-- modul meta volley glid -->
         <meta-data
-            android:name="com.ushare.modul.VolleyGlideModule"
+            android:name="com.guritadigital.shop.modul.VolleyGlideModule"
             android:value="GlideModule" />
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDd4uM8smoWGBhlSNvQL1_1dTyQGj0P4EE" />
+            android:value="AIzaSyB5ILxv2X3chw7MNrR0dLMTEtWjCqsCDf4" />
         <!-- service fcm simple -->
-        <service android:name=".app.CustomFirebaseMsg">
+        <service android:name="com.guritadigital.shop.app.CustomFirebaseMsg">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".app.MyfirebaseService">
+        <service android:name="com.guritadigital.shop.app.MyfirebaseService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
-        <activity android:name=".VoucherDetail"
+        <activity
+            android:name="com.guritadigital.shop.VoucherDetail"
             android:screenOrientation="portrait" />
-        <activity android:name=".SpinActivity"
+        <activity
+            android:name="com.guritadigital.shop.SpinActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".HelpActivity"
+        <activity
+            android:name="com.guritadigital.shop.HelpActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".HelpDetailActivity"
+        <activity
+            android:name="com.guritadigital.shop.HelpDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".GambarActivity"
+        <activity
+            android:name="com.guritadigital.shop.GambarActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".FlashDealActivity"
+        <activity
+            android:name="com.guritadigital.shop.FlashDealActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".KategoriActivity"
+        <activity
+            android:name="com.guritadigital.shop.KategoriActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ReservasiActivity"
+        <activity
+            android:name="com.guritadigital.shop.ProdukDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ProdukDetailActivity"
+        <activity
+            android:name="com.guritadigital.shop.LupaPasswordActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".LupaPasswordActivity"
+        <activity
+            android:name="com.guritadigital.shop.SentPoinActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".SentPoinActivity"
+        <activity
+            android:name="com.guritadigital.shop.KonfirmasiPoinActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".KonfirmasiPoinActivity"
+        <activity
+            android:name="com.guritadigital.shop.SentPoinOrderActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".SentPoinOrderActivity"
+        <activity
+            android:name="com.guritadigital.shop.FeedbackActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ReservasiDetailActivity"
+        <activity
+            android:name="com.guritadigital.shop.FeedbackDetailActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".FeedbackActivity"
-            android:screenOrientation="portrait" />
-        <activity android:name=".FeedbackDetailActivity"
-            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.guritadigital.shop.SubKategoriActivity"
+            android:label="@string/title_activity_sub_kategori"
+            android:theme="@style/MyMaterialTheme" />
+        <activity android:name="com.guritadigital.shop.WishlistActivity" />
+        <activity android:name="com.guritadigital.shop.SearchActivity"></activity>
     </application>
 
 </manifest>
